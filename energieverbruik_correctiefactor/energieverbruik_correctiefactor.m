@@ -20,13 +20,32 @@ start_ind = find(data.time>=start_utc,1);
 stop_ind = find(data.time>=stop_utc,1);
 
 
-% calculate integral
-signal_electriciteit = 9;
-signal_gas = 12;
+% search 'Electriciteit' data
+i=1;
+while i<50
+    if strcmp(data.signal(1,i).name, 'Electriciteit')
+        signal_electriciteit = i;
+        break;
+    else
+        i = i + 1;
+    end
+end
 
-range = start_ind:stop_ind;
+% search 'Gas' data
+j=1;
+while j<50
+    if strcmp(data.signal(1,j).name, 'Gas')
+        signal_gas = j;
+        break;
+    else
+        j = j + 1;
+    end
+end
+
+
 
 % determine time in hours
+range = start_ind:stop_ind;
 time_in_hours = hour((data.time(range) + ref_time)/(3600*24));
 
 % totaal electriciteitsverbruik

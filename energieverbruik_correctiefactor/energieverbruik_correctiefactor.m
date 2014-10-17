@@ -37,14 +37,14 @@ timezone = +2;
 localtime = datenum(1970, 1, 1, 0, 0, data.time) + timezone/24;
 range = start_ind:stop_ind;
 time_in_hours = hour(localtime(range));
-day_of_the_week = weekday((data.time(range)+ref_time)/(3600*24));
+day_of_the_week = weekday((localtime(range)));
 
 % totaal electriciteitsverbruik
 electriciteit_totaal = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % verbruik + omzetting van Ws naar kWh
 
 % nachttarief
 exclude = ones(size(data.time(range)));
-exclude(time_in_hours>7 & time_in_hours<22 & day_of_the_week>1 & day_of_the_week<6) = 0; 
+exclude(time_in_hours>=7 & time_in_hours<22 & day_of_the_week>1 & day_of_the_week<7) = 0; 
  
 electriciteit_nacht = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])).*exclude)/(1000*3600)  % verbruik + omzetting van Ws naar kWh
 

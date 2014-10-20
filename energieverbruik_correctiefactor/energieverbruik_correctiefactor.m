@@ -1,17 +1,14 @@
 clear; clc; close all;
 
-
 addpath('../lib');
-%addpath('../energieverbruik_correctiefactor');
 
 filename = '../data/knxcontrol_measurements_20140915_20141001.csv';
 start_date = '15/09/2014  17:42:35';
 stop_date = '30/09/2014 17:58:37';
+
 meter_reading_start = [2654.82  2593.14  439.704];  % meterstanden    [dag nacht gas] in [kWh kWh m3]
 meter_reading_stop  = [2696.55  2657.40  448.008];
-
 meter_reading_conversion = [1 1 10.95];     % conversiefactoren voor meter reading
-
 meter_difference = (meter_reading_stop-meter_reading_start).*meter_reading_conversion;  % energieverbruik in kWh
 
 % load data
@@ -40,22 +37,34 @@ time_in_hours = hour(localtime(range));
 day_of_the_week = weekday((localtime(range)));
 
 % totaal electriciteitsverbruik
-electriciteit_totaal = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % verbruik + omzetting van Ws naar kWh
+electriciteit_totaal = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % totaalverbruik [kWh]
 
 % nachttarief
 exclude = ones(size(data.time(range)));
 exclude(time_in_hours>=7 & time_in_hours<22 & day_of_the_week>1 & day_of_the_week<7) = 0; 
- 
-electriciteit_nacht = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])).*exclude)/(1000*3600)  % verbruik + omzetting van Ws naar kWh
+electriciteit_nacht = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])).*exclude)/(1000*3600)  % nachtverbruik [kWh]
 
 % dagtarief
-electriciteit_dag = electriciteit_totaal - electriciteit_nacht
+electriciteit_dag = electriciteit_totaal - electriciteit_nacht    % dagverbruik [kWh] 
 
 % gas
-gas = sum(data.signal(signal_gas).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % verbruik + omzetting van Ws naar kWh
+gas = sum(data.signal(signal_gas).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % gasverbruik [kWh]
 
 % calculate electriciteitsverbruik_correctiefactor
 correctie_factor = meter_difference./[electriciteit_dag electriciteit_nacht gas];
+disp('correctiefactor [electriciteit_dag  electriciteit_nacht  gas]');
+disp(' ');
 disp(correctie_factor);
+
+% staafdiagram
+subplot(2,1,1);
+bar([electriciteit_dag electriciteit_nacht electriciteit_totaal gas], 0.3);
+set(gca,'XTickLabel',{'electriciteit_dag','electriciteit_nacht','electriciteit_totaal','gas'});
+title 'Staafdiagram energieverbruik';
+subplot(2,1,2);
+bar(correctie_factor, 0.2);
+set(gca,'XTickLabel',{'correctiefactor_dag','correctiefactor_nacht','correctiefactor_gas'});
+title 'Staafdiagram correctiefactor';
+colormap summer;
 
 

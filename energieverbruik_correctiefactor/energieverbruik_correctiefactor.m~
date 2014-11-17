@@ -23,11 +23,11 @@ stop_ind = find(data.time>=stop_utc,1);
 
 % search 'Electriciteit' data
 signalname = 'Electriciteit';
-signal_electriciteit = find_signal(data, signalname);
+signal_electriciteit = find_signal(data, signalname,0,0,0);
 
 % search 'Gas' data
 signalname = 'Gas';
-signal_gas = find_signal(data, signalname);
+signal_gas = find_signal(data, signalname,0,0,0);
 
 % determine time in hours (local time)
 timezone = +2;
@@ -42,7 +42,6 @@ electriciteit_totaal = sum(data.signal(signal_electriciteit).data(range).*diff(d
 % nachttarief
 exclude = ones(size(data.time(range)));
 exclude(time_in_hours>=7 & time_in_hours<22 & day_of_the_week>1 & day_of_the_week<7) = 0; 
- 
 electriciteit_nacht = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])).*exclude)/(1000*3600)  % nachtverbruik [kWh]
 
 % dagtarief

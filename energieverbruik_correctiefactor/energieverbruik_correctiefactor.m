@@ -23,11 +23,11 @@ stop_ind = find(data.time>=stop_utc,1);
 
 % search 'Electriciteit' data
 signalname = 'Electriciteit';
-signal_electriciteit = find_signal(data, signalname);
+signal_electriciteit = find_signal(data, signalname,0,0,0);
 
 % search 'Gas' data
 signalname = 'Gas';
-signal_gas = find_signal(data, signalname);
+signal_gas = find_signal(data, signalname,0,0,0);
 
 % determine time in hours (local time)
 timezone = +2;

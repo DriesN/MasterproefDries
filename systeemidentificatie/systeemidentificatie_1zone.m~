@@ -1,0 +1,16 @@
+% search Toperationeel
+signalname = 'Toperationeel';
+temp_zone1 = find_signal(data,signalname,0,0);
+temp_zone2 = find_signal(data,signalname,temp_zone1,0);
+temp_zone3 = find_signal(data,signalname,temp_zone1,temp_zone2);
+
+% search Intern (invallende zonne-energie)
+signalname = 'Intern';
+solar_zone1 = find_signal(data,signalname,0,0);
+solar_zone2 = find_signal(data,signalname,solar_zone1,0);
+solar_zone3 = find_signal(data,signalname,solar_zone1,solar_zone2);
+
+%search Verwarming
+signalname = 'Verwarming';
+verwar_zone1 = 
+   

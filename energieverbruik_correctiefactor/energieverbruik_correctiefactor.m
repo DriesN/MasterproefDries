@@ -23,11 +23,11 @@ stop_ind = find(data.time>=stop_utc,1);
 
 % search 'Electriciteit' data
 signalname = 'Electriciteit';
-signal_electriciteit = find_signal(data, signalname,0,0,0);
+signal_electriciteit = find_signal(data, signalname);
 
 % search 'Gas' data
 signalname = 'Gas';
-signal_gas = find_signal(data, signalname,0,0,0);
+signal_gas = find_signal(data, signalname);
 
 % determine time in hours (local time)
 timezone = +2;
@@ -37,18 +37,18 @@ time_in_hours = hour(localtime(range));
 day_of_the_week = weekday((localtime(range)));
 
 % totaal electriciteitsverbruik
-electriciteit_totaal = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % totaalverbruik [kWh]
+electriciteit_totaal = sum(data.signal(signal_electriciteit(1)).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % totaalverbruik [kWh]
 
 % nachttarief
 exclude = ones(size(data.time(range)));
 exclude(time_in_hours>=7 & time_in_hours<22 & day_of_the_week>1 & day_of_the_week<7) = 0; 
-electriciteit_nacht = sum(data.signal(signal_electriciteit).data(range).*diff(data.time([range(1)-1, range])).*exclude)/(1000*3600)  % nachtverbruik [kWh]
+electriciteit_nacht = sum(data.signal(signal_electriciteit(1)).data(range).*diff(data.time([range(1)-1, range])).*exclude)/(1000*3600)  % nachtverbruik [kWh]
 
 % dagtarief
 electriciteit_dag = electriciteit_totaal - electriciteit_nacht    % dagverbruik [kWh] 
 
 % gas
-gas = sum(data.signal(signal_gas).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % gasverbruik [kWh]
+gas = sum(data.signal(signal_gas(1)).data(range).*diff(data.time([range(1)-1, range])))/(1000*3600)  % gasverbruik [kWh]
 
 % calculate electriciteitsverbruik_correctiefactor
 correctie_factor = meter_difference./[electriciteit_dag electriciteit_nacht gas];

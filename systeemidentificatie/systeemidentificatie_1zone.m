@@ -29,10 +29,9 @@ solar_average = mean([data.signal(signal_solar(1)).data(range) data.signal(signa
 %calculate average heating in the 3 zones
 verw_average = mean([data.signal(signal_verw(2)).data(range) data.signal(signal_verw(3)).data(range) data.signal(signal_verw(4)).data(range)],2);
 
-
 %create inputstructure
 inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'Q_solar_meas',{solar_average},'Q_heat_meas',{verw_average},'t',{data.time(range)});
 
 %optimalisation
 x0 = [3,1000000];
-[x,fval] = fminsearch(@(x)costfunction(x,inp),x0,optimset('Display','iter'));
+[x,fval] = fminsearch(@(x) costfunction(x,inp),x0,optimset('Display','iter'));

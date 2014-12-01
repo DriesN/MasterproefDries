@@ -32,4 +32,4 @@ inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'Q_solar_meas',
 
 %optimalisation
 x0 = [3,1000000];
-[x,fval] = fminsearch(@(x) costfunction(x,inp),x0,optimset('Display','iter'));
+[x,fval] = fminsearch(@(x)costfunction(x,inp),x0,optimset('Display','iter'));

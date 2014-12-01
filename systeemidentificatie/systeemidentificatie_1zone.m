@@ -1,5 +1,8 @@
 addpath('../lib');
 
+% zet hier misschien bij hoe je de data variabele aanmaakt want die is niet
+% gedefinieerd als ik opstart
+
 %search Temperatuur
 signalname = 'Temperatuur';
 signal_temp_ambient = find_signal(data,signalname);

@@ -7,7 +7,7 @@ function temp_floor = calculate_UFH(Q, time)
     
     %calculate temperatuur of underfloor heating with: Q = m*c*dT
     for i = 1:length(Q_heat_meas)-1
-        T(i+1) = (Q_heat_meas(i)./(t(i+1)-t(i)))./(m.*4186)+T(i); 
+        T(i+1) = (Q_heat_meas(i).*(t(i+1)-t(i)))./(m.*4186)+T(i); 
     end
  
     %rotate T matrix

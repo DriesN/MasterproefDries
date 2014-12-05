@@ -14,11 +14,16 @@ signalname = 'Toperationeel';
 signal_temp = find_signal(data,signalname);
 
 % search Intern (invallende zonne-energie)
-signalname = 'Intern';
+signalname = 'Intern';        % Dries,  intern zijn interne winsten -> tgv gebruik van elektrische apparaten ed.         zonne energie zit in irradiatie
 signal_solar = find_signal(data,signalname);
 
 %search Verwarming
 signalname = 'Verwarming';
+% Dries, er zijn 4 kolommen met de naam verwarming. De eerste is het gemeten elektriciteits verbruik voor verwarming.
+% De andere 3 zijn gewenste warmtestromen. Deze worden momenteel niet goed berekend en stellen dus niks voor.
+% De werkelijke warmtestroom input hangt af van het elektriciteitsverbruik voor verwarming (voornamelijk warmtepomp) en het gasverbruik
+% Q_heat = COP*signal_verw(1) +  signal_gas
+% hierin is COP ook een onbekende die uit de parameter schatting moet volgen.
 signal_verw = find_signal(data,signalname);
 
 %calculate average temp in the 3 zones

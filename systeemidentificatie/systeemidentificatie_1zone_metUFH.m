@@ -1,3 +1,4 @@
+clc;
 addpath('../lib');
 
 % zet hier misschien bij hoe je de data variabele aanmaakt want die is niet
@@ -36,17 +37,21 @@ temp_floor = calculate_UFH(verw_average, data.time(range));
 inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'T_floor',{temp_floor},'Q_solar_meas',{solar_average},'Q_heat_meas',{verw_average},'t',{data.time(range)});
 
 %optimalisation
-x0 = [3,1000000];
-[x,fval] = fminsearch(@(x) costfunction(x,inp),x0,optimset('Display','iter'));
-
+x0 = [3,1000000,3,1000000];
+[x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,optimset('Display','iter'));
 
 R = x(1)
 C = x(2)
-T_cal(1) = inp.T_meas(1);
+R_v = x(3)
+C_v = x(4)
 
+T_cal(1) = inp.T_meas(1);
 for i = 1:length(inp.T_meas)-1
     T_cal(i+1) = T_cal(i) + (inp.Q_solar_meas(i)-(T_cal(i)-inp.T_amb_meas(i))./R)./C .*(inp.t(i+1)-inp.t(i)); 
 end
 for i = 1:3
     T_cal = rot90(T_cal);
 end
+
+plot(localtime(range),T_cal)
+datetick('x', 20);

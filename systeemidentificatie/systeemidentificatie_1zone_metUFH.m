@@ -31,7 +31,7 @@ solar_average = mean([data.signal(signal_solar(1)).data(range) data.signal(signa
 verw_average = mean([data.signal(signal_verw(2)).data(range) data.signal(signal_verw(3)).data(range) data.signal(signal_verw(4)).data(range)],2);
 
 %calculate temperature underfloor heating
-temp_floor = calculate_UFH(verw_average, data.time(range));
+temp_floor = verw_average./mean(verw_average)+35;
 
 %create inputstructure
 inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'T_floor',{temp_floor},'Q_solar_meas',{solar_average},'Q_heat_meas',{verw_average},'t',{data.time(range)});

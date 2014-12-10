@@ -14,16 +14,11 @@ signalname = 'Toperationeel';
 signal_temp = find_signal(data,signalname);
 
 % search Intern (invallende zonne-energie)
-signalname = 'Intern';        % Dries,  intern zijn interne winsten -> tgv gebruik van elektrische apparaten ed.         zonne energie zit in irradiatie
+signalname = 'Irradiatie';
 signal_solar = find_signal(data,signalname);
 
 %search Verwarming
 signalname = 'Verwarming';
-% Dries, er zijn 4 kolommen met de naam verwarming. De eerste is het gemeten elektriciteits verbruik voor verwarming.
-% De andere 3 zijn gewenste warmtestromen. Deze worden momenteel niet goed berekend en stellen dus niks voor.
-% De werkelijke warmtestroom input hangt af van het elektriciteitsverbruik voor verwarming (voornamelijk warmtepomp) en het gasverbruik
-% Q_heat = COP*signal_verw(1) +  signal_gas
-% hierin is COP ook een onbekende die uit de parameter schatting moet volgen.
 signal_verw = find_signal(data,signalname);
 
 %calculate average temp in the 3 zones
@@ -33,13 +28,16 @@ temp_average = mean([data.signal(signal_temp(1)).data(range) data.signal(signal_
 solar_average = mean([data.signal(signal_solar(1)).data(range) data.signal(signal_solar(2)).data(range) data.signal(signal_solar(3)).data(range)],2);
 
 %calculate average heating in the 3 zones
-verw_average = mean([data.signal(signal_verw(2)).data(range) data.signal(signal_verw(3)).data(range) data.signal(signal_verw(4)).data(range)],2);
+verw_heatpump = data.signal(signal_verw(1)).data(range);
+verw_gas = data.signal(signal_gas).data(range);
 
 %calculate temperature underfloor heating
-temp_floor = verw_average./mean(verw_average)+35;
+for i=1:length(range)
+    temp_floor(i) = 35;
+end
 
 %create inputstructure
-inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'T_floor',{temp_floor},'Q_solar_meas',{solar_average},'Q_heat_meas',{verw_average},'t',{data.time(range)});
+inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'T_floor',{temp_floor},'Q_solar_meas',{solar_average},'Q_heatpump',{verw_heatpump},'Q_gas',{verw_gas},'t',{data.time(range)});
 
 %optimalisation
 x0 = [3,1000000,3,1000000];

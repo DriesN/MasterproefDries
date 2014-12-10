@@ -1,7 +1,6 @@
-function temp_floor = calculate_UFH(Q, time)
+function temp_floor = calculate_UFH(Q)
 
     Q_heat_meas = Q;
-    t = time;
     T(1) = 35;
     m = 100;
     

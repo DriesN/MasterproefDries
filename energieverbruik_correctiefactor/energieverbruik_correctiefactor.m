@@ -66,9 +66,20 @@ gas = sum(data.signal(signal_gas(1)).data(range).*diff(data.time([range(1)-1, ra
 
 % calculate electriciteitsverbruik_correctiefactor
 correctie_factor = meter_difference./[electriciteit_dag electriciteit_nacht gas];
+
+%corrigeren data
+electriciteit_dag = electriciteit_dag .* correctie_factor(1);
+electriciteit_nacht = electriciteit_nacht .* correctie_factor(2);
+electriciteit_totaal = electriciteit_dag + electriciteit_nacht;
+gas = gas .* correctie_factor(3);
+gecorrigeerde_data = [electriciteit_dag electriciteit_nacht electriciteit_totaal gas];
+
 disp('correctiefactor [electriciteit_dag  electriciteit_nacht  gas]');
 disp(' ');
 disp(correctie_factor);
+disp('Gecorrigeerde data [electriciteit_dag electriciteit_nacht electriciteit_totaal gas]');
+disp(' ');
+disp(gecorrigeerde_data);
 
 % staafdiagram
 subplot(2,1,1);

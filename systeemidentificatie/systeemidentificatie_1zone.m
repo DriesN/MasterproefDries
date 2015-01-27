@@ -35,7 +35,7 @@ verw_gas = data.signal(signal_gas).data(range);
 inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'Q_solar_meas',{solar_average},'Q_heatpump',{verw_heatpump},'Q_gas',{verw_gas},'t',{data.time(range)});
 
 %optimalisation
-x0 = [3,1000000];
+x0 = [0.0058,8.0563e+07];
 [x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone'),x0,optimset('Display','iter'));
 
 R = x(1)

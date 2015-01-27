@@ -24,12 +24,24 @@ start_ind = find(data.time>=start_utc,1);
 stop_ind = find(data.time>=stop_utc,1);
 
 % search 'Electriciteit' data
-signalname = 'Electriciteit';
+if strcmp(filename, '../data/knxcontrol_measurements_20140915_20141001.csv')
+    signalname = 'Electriciteit';
+else
+    signalname = 'elektriciteit_totaal';
+end
+
 signal_electriciteit = find_signal(data, signalname);
+    
 
 % search 'Gas' data
-signalname = 'Gas';
+if strcmp(filename, '../data/knxcontrol_measurements_20140915_20141001.csv')
+    signalname = 'Gas';
+else
+    signalname = 'gas';
+end
+
 signal_gas = find_signal(data, signalname);
+
 
 % determine time in hours (local time)
 timezone = +2;

@@ -4,6 +4,7 @@ addpath('../lib');
 %kies methode: 
 %-'systeemidentificatie_1zone'
 %-'systeemidentificatie_1zone_metUFH'
+%-'systeemidentificatie_1zone_metUFH_opp_kern'
 methode = 'systeemidentificatie_1zone_metUFH';
 
 %search data

@@ -103,3 +103,5 @@ plot(localtime(range),temp_average,'b',localtime(range),T_cal,'r')
 legend('Gemeten','Berekende');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';
+datetick('x','dd')
+grid on

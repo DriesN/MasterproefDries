@@ -1,7 +1,6 @@
 function cost = costfunction(x,inputs,methode)    
     R = x(1); 
     C = x(2);
-    
     T_meas = inputs.T_meas;
     T_amb_meas = inputs.T_amb_meas;
     Q_solar_meas = inputs.Q_solar_meas;

@@ -88,6 +88,10 @@ end
     
 subplot(1,1,1)
 plot(localtime(range),temp_average,'b',localtime(range),T_cal,'r')
+xlabel('tijd (day of the month)')
+ylabel('temperatuur (degC)')
 legend('Gemeten','Berekende');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';
+datetick('x','dd')
+grid on

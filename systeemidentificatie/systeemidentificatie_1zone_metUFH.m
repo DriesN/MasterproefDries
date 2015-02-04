@@ -67,6 +67,7 @@ intern_average = mean([data.signal(signal_intern(1)).data(range) data.signal(sig
 verw_heatpump = data.signal(signal_verw_heatpump(1)).data(range);
 verw_gas = data.signal(signal_verw_gas).data(range).*0.8;
 
+
 %smooth datasignals
 temp_ambient = smooth(temp_ambient,'rlowess');
 temp_average = smooth(temp_average,'rlowess');
@@ -98,3 +99,5 @@ plot(localtime(range),temp_average,'b',localtime(range),T_cal,'r')
 legend('Gemeten','Berekende');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';
+datetick('x','dd')
+grid on

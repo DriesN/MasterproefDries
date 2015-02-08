@@ -4,8 +4,8 @@ addpath('../lib');
 
 %Ingeven welke csv-file, begin- en einddatum en meterstanden
 filename = '../data/knxcontrol_measurements_20141101_20141214.csv';
-start_date = '15/11/2014  17:42:35';
-stop_date = '30/11/2014 17:58:37';
+start_date = '02/11/2014  17:42:35';
+stop_date = '30/12/2014 17:58:37';
 meter_reading_start = [2654.82  2593.14  439.704];  % meterstanden    [dag nacht gas] in [kWh kWh m3]
 meter_reading_stop  = [2696.55  2657.40  448.008];
 

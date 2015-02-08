@@ -67,7 +67,6 @@ intern_average = mean([data.signal(signal_intern(1)).data(range) data.signal(sig
 verw_heatpump = data.signal(signal_verw_heatpump(1)).data(range);
 verw_gas = data.signal(signal_verw_gas).data(range).*0.8;
 
-
 %smooth datasignals
 temp_ambient = smooth(temp_ambient,'rlowess');
 temp_average = smooth(temp_average,'rlowess');
@@ -77,17 +76,20 @@ inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'Q_solar_meas',
 
 
 %optimalisatie één zone met vloerverwarming
-x0 = [0.0058,8.0563e+07,3,1000000];
-[x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,optimset('Display','iter'));
+x0 = [0.0058,8.0563e+07,3,1000000,4,1];
+[x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 R = x(1)
 C = x(2)
 R_v = x(3)
 C_v = x(4)
+cf_COP = x(5)
+cf_sol = x(6)
 T_cal = zeros(length(inp.T_meas),1);
 T_floor = zeros(length(inp.T_meas),1);
 T_cal(1) = inp.T_meas(1);
 T_floor(1) = 35;
-Q_heat = inp.Q_heatpump.*4 + inp.Q_gas;
+Q_heat = inp.Q_heatpump.*((35./(35-inp.T_amb_meas)).*cf_COP) + inp.Q_gas;
+Q_solar_meas = inp.Q_solar_meas.*cf_sol;
 
 for i = 1:length(inp.T_meas)-1        
     T_cal(i+1) = T_cal(i) + ((inp.Q_solar_meas(i)+((T_floor(i)-T_cal(i))./R_v)-((T_cal(i)-inp.T_amb_meas(i))./R))./C).*(inp.t(i+1)-inp.t(i));

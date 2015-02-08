@@ -1,11 +1,13 @@
 function cost = costfunction(x,inputs,methode)    
     R = x(1); 
     C = x(2);
+    cf_COP = x(5);
+    cf_sol = x(6);
     T_meas = inputs.T_meas;
     T_amb_meas = inputs.T_amb_meas;
-    Q_solar_meas = inputs.Q_solar_meas;
+    Q_solar_meas = inputs.Q_solar_meas.*cf_sol;
     Q_intern = inputs.Q_intern;
-    Q_heat = inputs.Q_heatpump.*4 + inputs.Q_gas;
+    Q_heat = inputs.Q_heatpump.*((35./(35-T_amb_meas)).*cf_COP) + inputs.Q_gas;
     t = inputs.t;
     
     %solve differential equation (numerical) --> 1 zone

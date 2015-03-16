@@ -65,7 +65,9 @@ intern_average = mean([data.signal(signal_intern(1)).data(range) data.signal(sig
 
 %calculate heating
 verw_heatpump = data.signal(signal_verw_heatpump(1)).data(range);
-verw_gas = data.signal(signal_verw_gas).data(range).*0.8;
+verw_gas_origineel = data.signal(signal_verw_gas).data(range);
+verw_gas = warmtewinsten(verw_gas_origineel,20);
+
 
 %smooth datasignals
 temp_ambient = smooth(temp_ambient,'rlowess');
@@ -76,21 +78,26 @@ inp = struct('T_meas',{temp_average},'T_amb_meas',{temp_ambient},'Q_solar_meas',
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.0058,8.0563e+07,3,1000000,3,1000000];
+x0 = [0.0058,8.0563e+07,3,1000000,4,1,3,1000000];
+
 [x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,optimset('Display','iter'));
 R = x(1)
 C = x(2)
 R_v = x(3)
 C_v = x(4)
-R_opp = x(5)
-C_opp = x(6)
+cf_COP = x(5)
+cf_sol = x(6)
+R_opp = x(7)
+C_opp = x(8)
 T_cal = zeros(length(inp.T_meas),1);
 T_cal(1) = inp.T_meas(1);
 T_floor = zeros(length(inp.T_meas),1);
 T_floor(1) = 50;
 T_opp = zeros(length(inp.T_meas),1);
 T_opp(1) = 35;
-Q_heat = inp.Q_heatpump.*4 + inp.Q_gas;
+Q_heat = inp.Q_heatpump.*((35./(35-inp.T_amb_meas)).*cf_COP) + inp.Q_gas;
+Q_solar_meas = inp.Q_solar_meas.*cf_sol;
+
     
 for i = 1:length(inp.T_meas)-1        
     T_cal(i+1) = T_cal(i) + ((inp.Q_intern(i)+((T_opp(i)-T_cal(i))./R_opp)-((T_cal(i)-inp.T_amb_meas(i))./R))./C).*(inp.t(i+1)-inp.t(i));
@@ -104,4 +111,6 @@ legend('Gemeten','Berekende');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';
 datetick('x','dd')
+ylabel('temperatuur (degC)')
+xlabel('tijd (day of the month)')
 grid on

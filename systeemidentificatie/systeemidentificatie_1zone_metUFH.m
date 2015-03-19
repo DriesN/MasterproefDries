@@ -56,7 +56,7 @@ gemiddelde_zon = mean([data.signal(signal_zon(1)).data(range) data.signal(signal
 %berekent verwarming
 warmtepomp = data.signal(signal_warmtepomp(1)).data(range);
 verw_gas_origineel = data.signal(signal_gas).data(range);
-verw_gas = warmtewinsten(verw_gas_origineel,10);
+verw_gas = warmtewinsten(verw_gas_origineel,15);
 
 %smooth datasignalen
 buitentemp = smooth(buitentemp,'rlowess');
@@ -67,7 +67,7 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddel
 
 
 %optimalisatie één zone met vloerverwarming
-x0 = [0.0058,8.0563e+07,3,1000000,0.5,1];
+x0 = [0.001,100000000,0.001,1000000,4,1];
 [x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 R = x(1)
 C = x(2)

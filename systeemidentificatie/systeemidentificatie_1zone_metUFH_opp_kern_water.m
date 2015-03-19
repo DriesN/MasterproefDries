@@ -78,9 +78,9 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddel
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.001,100000000,0.0001,1000000,4,1,0.001,1000000];
+x0 = [0.001,100000000,0.0001,1000000,4,1,0.001,1000000,0.01,100000];
 
-[x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
+[x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern_water'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 R = x(1)
 C = x(2)
 R_kern = x(3)
@@ -89,13 +89,18 @@ cf_COP = x(5)
 cf_sol = x(6)
 R_opp = x(7)
 C_opp = x(8)
+R_water = x(9)
+C_water = x(10)
+
 
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
+T_water = zeros(length(gemiddelde_temp),1);
+T_water(1) = 35;
 T_kern = zeros(length(gemiddelde_temp),1);
-T_kern(1) = 35;
+T_kern(1) = 30;
 T_opp = zeros(length(gemiddelde_temp),1);
-T_opp(1) = 25;
+T_opp(1) = 30;
 Q_verw = warmtepomp.*((35./(35-buitentemp)).*cf_COP) + verw_gas;
 Q_zon = gemiddelde_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
@@ -103,7 +108,8 @@ Q_intern = gemiddelde_intern;
 for i = 1:length(gemiddelde_temp)-1        
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(inp.t(i+1)-inp.t(i));
     T_opp(i+1) = T_opp(i) + ((gemiddelde_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(inp.t(i+1)-inp.t(i));
-    T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(inp.t(i+1)-inp.t(i));
+    T_kern(i+1) = T_kern(i) + ((((T_water(i)-T_kern(i))./R_water)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(inp.t(i+1)-inp.t(i));
+    T_water(i+1) = T_water(i) + ((Q_verw(i)-((T_water(i)-T_kern(i))./R_water))./C_water).*(inp.t(i+1)-inp.t(i));
 end
 
 figure
@@ -118,4 +124,4 @@ xlabel('tijd (day of the month)')
 grid on
 
 %crossvalidation
-crossvalidation_1zone_metUFH_opp_kern;
+crossvalidation_1zone_metUFH_opp_kern_water;

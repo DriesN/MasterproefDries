@@ -36,11 +36,16 @@ gemiddelde_temp_crossval = smooth(gemiddelde_temp_crossval,'rlowess');
 %differentiaalberekening
 T_berekend_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_berekend_crossval(1) = gemiddelde_temp_crossval(1);
+T_cond_crossval = zeros(length(gemiddelde_temp_crossval),1);
+T_cond_crossval(1) = 35;
+T_water_crossval = zeros(length(gemiddelde_temp_crossval),1);
+T_water_crossval(1) = 30;
 T_kern_crossval = zeros(length(gemiddelde_temp_crossval),1);
-T_kern_crossval(1) = 35;
+T_kern_crossval(1) = 28;
 T_opp_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_opp_crossval(1) = 25;
-Q_verw_crossval = warmtepomp_crossval.*((35./(35-buitentemp_crossval)).*cf_COP) + verw_gas_crossval;
+Q_warmtepomp_crossval = warmtepomp_crossval.*((35./(35-buitentemp_crossval)).*cf_COP);
+Q_gas_crossval = verw_gas_crossval;
 Q_zon_crossval = gemiddelde_zon_crossval.*cf_sol;
 Q_intern_crossval = gemiddelde_intern_crossval;
 t_crossval = data.time(range_crossval);
@@ -48,7 +53,9 @@ t_crossval = data.time(range_crossval);
 for i = 1:length(gemiddelde_temp_crossval)-1        
     T_berekend_crossval(i+1) = T_berekend_crossval(i) + ((Q_intern_crossval(i)+((T_opp_crossval(i)-T_berekend_crossval(i))./R_opp)-((T_berekend_crossval(i)-buitentemp_crossval(i))./R))./C).*(t_crossval(i+1)-t_crossval(i));
     T_opp_crossval(i+1) = T_opp_crossval(i) + ((gemiddelde_zon_crossval(i)+((T_kern_crossval(i)-T_opp_crossval(i))./R_kern)-((T_opp_crossval(i)-T_berekend_crossval(i))./R_opp))./C_opp).*(t_crossval(i+1)-t_crossval(i));
-    T_kern_crossval(i+1) = T_kern_crossval(i) + ((Q_verw_crossval(i)-((T_kern_crossval(i)-T_opp_crossval(i))./R_kern))./C_kern).*(t_crossval(i+1)-t_crossval(i));
+    T_kern_crossval(i+1) = T_kern_crossval(i) + ((((T_water_crossval(i)-T_kern_crossval(i))./R_water)-((T_kern_crossval(i)-T_opp_crossval(i))./R_kern))./C_kern).*(t_crossval(i+1)-t_crossval(i));
+    T_water_crossval(i+1) = T_water_crossval(i) + ((Q_gas_crossval(i)+((T_cond_crossval(i)-T_water_crossval(i))./R_cond)-((T_water_crossval(i)-T_kern_crossval(i))./R_water))./C_water).*(t_crossval(i+1)-t_crossval(i));
+    T_cond_crossval(i+1) = T_cond_crossval(i) + ((Q_warmtepomp_crossval(i)-((T_cond_crossval(i)-T_water_crossval(i))./R_cond))./C_cond).*(t_crossval(i+1)-t_crossval(i));
 end
 
 

@@ -50,7 +50,7 @@ function cost = costfunction(x,inputs,methode)
         C_opp = x(8);
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;
-        Q_verw = inputs.warmtepomp.*((35./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
+        Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
         
         T_berekend = zeros(length(T_gem),1);
 
@@ -76,7 +76,7 @@ function cost = costfunction(x,inputs,methode)
         C_water = x(10);
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;
-        Q_verw = inputs.warmtepomp.*((35./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
+        Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
         
         T_berekend = zeros(length(T_gem),1);
         T_water = zeros(length(T_gem),1);
@@ -109,7 +109,7 @@ function cost = costfunction(x,inputs,methode)
         C_cond = x(12);
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;
-        Q_warmtepomp = inputs.warmtepomp.*((35./(35-T_buiten)).*cf_COP);
+        Q_warmtepomp = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP);
         Q_gas = inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);
         T_cond = zeros(length(T_gem),1);

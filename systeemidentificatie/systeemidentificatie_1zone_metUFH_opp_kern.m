@@ -3,7 +3,7 @@ addpath('../lib');
 addpath('../energieverbruik_correctiefactor')
 
 %energieverbruik_correctiefactor uitvoeren
-energieverbruik_correctiefactor;
+energieverbruik_correctiefactor; % de correctiefactoren zijn heel klein ~0.25 en volgens mij gebruik je ze niet in dit script
 
 %search data
 if strcmp(filename,'../data/knxcontrol_measurements_20140915_20141001.csv')
@@ -78,9 +78,11 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddel
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.001,100000000,0.0001,1000000,0.5,1,0.001,1000000,25,25];
+x0 = [0.001,10e6,0.0001,100e6,0.5,0.9,0.001,10e6,20,20];
+lb = [0    , 1e6,0     ,  1e6,0.1,0.5,0    , 1e6,16,16];
+ub = [1    ,10e7,1     ,  1e8,0.8,1.0,1    ,10e7,26,26];
 
-[x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
+[x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 T_kern = zeros(length(gemiddelde_temp),1);
 T_opp = zeros(length(gemiddelde_temp),1);
 R = x(1)
@@ -93,6 +95,8 @@ R_opp = x(7)
 C_opp = x(8)
 T_kern(1) = x(9);
 T_opp(1) = x(10);
+T_kern(1)
+T_opp(1)
 
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
@@ -102,20 +106,33 @@ Q_intern = gemiddelde_intern;
 
 for i = 1:length(gemiddelde_temp)-1        
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(inp.t(i+1)-inp.t(i));
-    T_opp(i+1) = T_opp(i) + ((gemiddelde_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(inp.t(i+1)-inp.t(i));
+    T_opp(i+1) = T_opp(i) + ((Q_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(inp.t(i+1)-inp.t(i));
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(inp.t(i+1)-inp.t(i));
 end
 
-figure
-subplot(1,1,1)
-plot(localtime(range),gemiddelde_temp,'b',localtime(range),T_berekend,'r')
-legend('Gemeten','Berekende');
+
+figure;
+subplot(2,1,1);
+plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g',localtime(range),Q_intern,'b');
+legend('verw','zon','int');
+legend('boxoff');
+title 'Gemeten en berekende temperatuur';
+datetick('x','dd')
+ylabel('Q (W)')
+xlabel('tijd (day of the month)')
+grid on
+
+
+subplot(2,1,2);
+plot(localtime(range),gemiddelde_temp,'k--',localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
+legend('Gemeten','Berekende','Opp','Kern');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';
 datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')
 grid on
+
 
 %crossvalidation
 crossvalidation_1zone_metUFH_opp_kern;

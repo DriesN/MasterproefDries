@@ -78,7 +78,7 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddel
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.001,10e6,0.0001,100e6,0.5,0.9,0.001,10e6,20,20];
+x0 = [0.001,10e6,0.0001,100e6,0.5,0.9,0.01,10e6,21,21];
 lb = [0    , 1e6,0     ,  1e6,0.1,0.5,0    , 1e6,16,16];
 ub = [1    ,10e7,1     ,  1e8,0.8,1.0,1    ,10e7,26,26];
 

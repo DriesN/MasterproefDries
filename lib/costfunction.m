@@ -48,6 +48,7 @@ function cost = costfunction(x,inputs,methode)
         cf_sol = x(6);
         R_opp = x(7);
         C_opp = x(8);
+        
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;
         Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;

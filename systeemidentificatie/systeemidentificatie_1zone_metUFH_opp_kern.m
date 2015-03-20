@@ -78,9 +78,11 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddel
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.001,100000000,0.0001,1000000,4,1,0.001,1000000];
+x0 = [0.001,100000000,0.0001,1000000,0.5,1,0.001,1000000,25,25];
 
 [x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
+T_kern = zeros(length(gemiddelde_temp),1);
+T_opp = zeros(length(gemiddelde_temp),1);
 R = x(1)
 C = x(2)
 R_kern = x(3)
@@ -89,14 +91,12 @@ cf_COP = x(5)
 cf_sol = x(6)
 R_opp = x(7)
 C_opp = x(8)
+T_kern(1) = x(9);
+T_opp(1) = x(10);
 
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
-T_kern = zeros(length(gemiddelde_temp),1);
-T_kern(1) = 35;
-T_opp = zeros(length(gemiddelde_temp),1);
-T_opp(1) = 25;
-Q_verw = warmtepomp.*((35./(35-buitentemp)).*cf_COP) + verw_gas;
+Q_verw = warmtepomp.*((308.15./(35-buitentemp)).*cf_COP) + verw_gas;    % Kelvin!!!
 Q_zon = gemiddelde_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
 

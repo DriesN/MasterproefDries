@@ -5,10 +5,9 @@ function [gas_warmte] = warmtewinsten(data,res)
 gasdata_verbeterd = zeros(length(data),1);
 
 %Gemiddelde over een periode van 10 minuten
-for i=1:length(data)-res
+for i=1:res:length(data)-res
     resolution_range = i:i+res;
     gasdata_verbeterd(resolution_range) = mean(data(resolution_range));
-    i = i+res;
 end
 
 %Maximum van 20 kW

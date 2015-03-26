@@ -37,12 +37,12 @@ gemiddelde_temp_crossval = smooth(gemiddelde_temp_crossval,'rlowess');
 T_berekend_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_berekend_crossval(1) = gemiddelde_temp_crossval(1);
 T_water_crossval = zeros(length(gemiddelde_temp_crossval),1);
-T_water_crossval(1) = 35;
+T_water_crossval(1) = gemiddelde_temp_crossval(1);
 T_kern_crossval = zeros(length(gemiddelde_temp_crossval),1);
-T_kern_crossval(1) = 30;
+T_kern_crossval(1) = gemiddelde_temp_crossval(1);
 T_opp_crossval = zeros(length(gemiddelde_temp_crossval),1);
-T_opp_crossval(1) = 25;
-Q_verw_crossval = warmtepomp_crossval.*((35./(35-buitentemp_crossval)).*cf_COP) + verw_gas_crossval;
+T_opp_crossval(1) = gemiddelde_temp_crossval(1);
+Q_verw_crossval = warmtepomp_crossval.*((308.15./(35-buitentemp_crossval)).*cf_COP) + verw_gas_crossval;
 Q_zon_crossval = gemiddelde_zon_crossval.*cf_sol;
 Q_intern_crossval = gemiddelde_intern_crossval;
 t_crossval = data.time(range_crossval);
@@ -55,13 +55,25 @@ for i = 1:length(gemiddelde_temp_crossval)-1
 end
 
 
-figure
-subplot(1,1,1)
-plot(localtime(range_crossval),gemiddelde_temp_crossval,'b',localtime(range_crossval),T_berekend_crossval,'r')
-legend('Gemeten','Berekende');
+figure;
+subplot(2,1,1);
+plot(localtime(range_crossval),Q_verw_crossval,'r',localtime(range_crossval),Q_zon_crossval,'g',localtime(range_crossval),Q_intern_crossval,'b');
+legend('verw','zon','int');
+legend('boxoff');
+title 'Crossvalidation';
+datetick('x','dd')
+ylabel('Q (W)')
+xlabel('tijd (day of the month)')
+grid on
+
+
+subplot(2,1,2);
+plot(localtime(range_crossval),gemiddelde_temp_crossval,'k--',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_opp_crossval,'b',localtime(range_crossval),T_kern_crossval,'r',localtime(range_crossval),T_water_crossval,'g')
+legend('Gemeten','Berekende','Opp','Kern','Water');
 legend('boxoff');
 title 'Crossvalidation';
 datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')
 grid on
+ylim([19 22])

@@ -24,13 +24,13 @@ gemiddelde_intern_crossval = mean([data.signal(signal_intern(1)).data(range_cros
 gemiddelde_zon_crossval = mean([data.signal(signal_zon(1)).data(range_crossval) data.signal(signal_zon(2)).data(range_crossval) data.signal(signal_zon(3)).data(range_crossval)],2);
 
 %berekent verwarming
-warmtepomp_crossval = data.signal(signal_warmtepomp(1)).data(range_crossval);
-verw_gas_origineel_crossval = data.signal(signal_gas).data(range_crossval);
+warmtepomp_crossval = data.signal(signal_warmtepomp(1)).data(range_crossval).*0.9;
+verw_gas_origineel_crossval = data.signal(signal_gas).data(range_crossval).*0.8;
 verw_gas_crossval = warmtewinsten(verw_gas_origineel_crossval,15);
 
 %smooth datasignalen
-%buitentemp_crossval = smooth(buitentemp_crossval,'rlowess');
-%gemiddelde_temp_crossval = smooth(gemiddelde_temp_crossval,'rlowess');
+buitentemp_crossval = smooth(buitentemp_crossval,'rlowess');
+gemiddelde_temp_crossval = smooth(gemiddelde_temp_crossval,'rlowess');
 
 
 %differentiaalberekening
@@ -65,7 +65,7 @@ grid on
 
 
 subplot(2,1,2);
-plot(localtime(range_crossval),gemiddelde_temp_crossval,'k--',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_opp_crossval,'b',localtime(range_crossval),T_kern_crossval,'r')
+plot(localtime(range_crossval),gemiddelde_temp_crossval,'g--',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_opp_crossval,'b',localtime(range_crossval),T_kern_crossval,'r')
 legend('Gemeten','Berekende','Opp','Kern');
 legend('boxoff');
 title 'Crossvalidation';
@@ -73,4 +73,4 @@ datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')
 grid on
-ylim([19 22])
+

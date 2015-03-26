@@ -19,16 +19,18 @@ function cost = costfunction(x,inputs,methode)
     
     %solve differential equation (numerical) --> 1 zone met UFH
     if strcmp(methode, 'systeemidentificatie_1zone_metUFH')
+        T_vloer = zeros(length(T_gem),1);
+        T_vloer(1) = x(7);
         R_v = x(3);
         C_v = x(4);
         cf_COP = x(5);
         cf_sol = x(6);
+        
         Q_zon = inputs.Q_zon.*cf_sol;
         Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
-        T_berekend = zeros(length(T_gem),1);
-        T_vloer = zeros(length(T_gem),1);
-        T_vloer(1) = 35;
+        T_berekend = zeros(length(T_gem),1);        
         T_berekend(1) = T_gem(1);
+        
         for i = 1:length(T_gem)-1
             T_berekend(i+1) = T_berekend(i) + ((Q_zon(i)+((T_vloer(i)-T_berekend(i))./R_v)-((T_berekend(i)-T_buiten(i))./R))./C).*(t(i+1)-t(i));
             T_vloer(i+1) = T_vloer(i) + ((Q_verw(i)-((T_vloer(i)-T_berekend(i))./R_v))./C_v).*(t(i+1)-t(i));
@@ -67,6 +69,12 @@ function cost = costfunction(x,inputs,methode)
     %solve differential equation (numerical) -->1 zone met Q_intern
     %splitsing oppervlak_UFH en kern_UFH en water
     if strcmp(methode, 'systeemidentificatie_1zone_metUFH_opp_kern_water')
+        T_opp = zeros(length(T_gem),1);
+        T_kern = zeros(length(T_gem),1);
+        T_water = zeros(length(T_gem),1);
+        T_opp(1) = x(11);
+        T_kern(1) = x(12);
+        T_water(1) = x(13);
         R_kern = x(3);
         C_kern = x(4);
         cf_COP = x(5);
@@ -75,17 +83,12 @@ function cost = costfunction(x,inputs,methode)
         C_opp = x(8);
         R_water = x(9);
         C_water = x(10);
+        
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;
         Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
         
         T_berekend = zeros(length(T_gem),1);
-        T_water = zeros(length(T_gem),1);
-        T_kern = zeros(length(T_gem),1);
-        T_opp = zeros(length(T_gem),1);
-        T_water(1) = 35;
-        T_kern(1) = 30;
-        T_opp(1) = 25;
         T_berekend(1) = T_gem(1);
         
         for i = 1:length(T_gem)-1
@@ -98,6 +101,14 @@ function cost = costfunction(x,inputs,methode)
     %solve differential equation (numerical) -->1 zone met Q_intern
     %splitsing oppervlak_UFH en kern_UFH en water en warmtepompwater
     if strcmp(methode, 'systeemidentificatie_1zone_metUFH_opp_kern_water_WP')
+        T_cond = zeros(length(T_gem),1);
+        T_water = zeros(length(T_gem),1);
+        T_kern = zeros(length(T_gem),1);
+        T_opp = zeros(length(T_gem),1);
+        T_cond(1) = x(13);
+        T_water(1) = x(14);
+        T_kern(1) = x(15);
+        T_opp(1) = x(16);
         R_kern = x(3);
         C_kern = x(4);
         cf_COP = x(5);
@@ -108,19 +119,12 @@ function cost = costfunction(x,inputs,methode)
         C_water = x(10);
         R_cond = x(11);
         C_cond = x(12);
+        
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;
         Q_warmtepomp = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP);
         Q_gas = inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);
-        T_cond = zeros(length(T_gem),1);
-        T_water = zeros(length(T_gem),1);
-        T_kern = zeros(length(T_gem),1);
-        T_opp = zeros(length(T_gem),1);
-        T_cond(1) = 35;
-        T_water(1) = 30;
-        T_kern(1) = 28;
-        T_opp(1) = 25;
         T_berekend(1) = T_gem(1);
         
         for i = 1:length(T_gem)-1

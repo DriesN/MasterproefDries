@@ -1,6 +1,5 @@
 function [gas_warmte] = warmtewinsten(data,res)
 
-%gasdata_verbeterd = sgolayfilt(data,1,61);
 
 gasdata_verbeterd = zeros(length(data),1);
 

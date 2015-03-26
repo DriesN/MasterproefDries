@@ -78,9 +78,16 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddel
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.001,100000000,0.0001,1000000,4,1,0.001,1000000,0.01,100000];
+x0 = [0.001,10e6,0.0001,10e6,0.5,0.9,0.01,10e6,0.001,1e5,21,21,21];
+
+%lb = [0    ,1e6 ,0     ,1e6 ,0.1,0.5,0   , 1e6,0    ,1e3,16,16,16];
+%ub = [1    ,1e8 ,1     ,1e8 ,0.8,1.0,1   ,1e8 ,1    ,1e6,26,26,26];
 
 [x,fval] = fminsearch(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern_water'),x0,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
+
+T_opp = zeros(length(gemiddelde_temp),1);
+T_kern = zeros(length(gemiddelde_temp),1);
+T_water = zeros(length(gemiddelde_temp),1);
 R = x(1)
 C = x(2)
 R_kern = x(3)
@@ -91,17 +98,13 @@ R_opp = x(7)
 C_opp = x(8)
 R_water = x(9)
 C_water = x(10)
-
+T_opp(1) = x(11);
+T_kern(1) = x(12);
+T_water(1) = x(13);
 
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
-T_water = zeros(length(gemiddelde_temp),1);
-T_water(1) = 35;
-T_kern = zeros(length(gemiddelde_temp),1);
-T_kern(1) = 30;
-T_opp = zeros(length(gemiddelde_temp),1);
-T_opp(1) = 30;
-Q_verw = warmtepomp.*((35./(35-buitentemp)).*cf_COP) + verw_gas;
+Q_verw = warmtepomp.*((308.15./(35-buitentemp)).*cf_COP) + verw_gas;
 Q_zon = gemiddelde_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
 
@@ -112,10 +115,21 @@ for i = 1:length(gemiddelde_temp)-1
     T_water(i+1) = T_water(i) + ((Q_verw(i)-((T_water(i)-T_kern(i))./R_water))./C_water).*(inp.t(i+1)-inp.t(i));
 end
 
-figure
-subplot(1,1,1)
-plot(localtime(range),gemiddelde_temp,'b',localtime(range),T_berekend,'r')
-legend('Gemeten','Berekende');
+figure;
+subplot(2,1,1);
+plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g',localtime(range),Q_intern,'b');
+legend('verw','zon','int');
+legend('boxoff');
+title 'Warmtewinsten {verwarming, zon en intern}';
+datetick('x','dd')
+ylabel('Q (W)')
+xlabel('tijd (day of the month)')
+grid on
+
+
+subplot(2,1,2);
+plot(localtime(range),gemiddelde_temp,'k--',localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r',localtime(range),T_water,'g')
+legend('Gemeten','Berekende','Opp','Kern','Water');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';
 datetick('x','dd')

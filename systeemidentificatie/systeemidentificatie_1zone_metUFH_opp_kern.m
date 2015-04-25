@@ -3,7 +3,7 @@ addpath('../lib');
 addpath('../energieverbruik_correctiefactor')
 
 %energieverbruik_correctiefactor uitvoeren
-energieverbruik_correctiefactor; % de correctiefactoren zijn heel klein ~0.25 en volgens mij gebruik je ze niet in dit script
+energieverbruik_correctiefactor; 
 
 %search data
 if strcmp(filename,'../data/knxcontrol_measurements_20140915_20141001.csv')
@@ -113,7 +113,7 @@ subplot(2,1,1);
 plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g',localtime(range),Q_intern,'b');
 legend('verw','zon','int');
 legend('boxoff');
-title 'Gemeten en berekende temperatuur';
+title 'Warmtewinsten';
 datetick('x','dd')
 ylabel('Q (W)')
 xlabel('tijd (day of the month)')
@@ -121,7 +121,7 @@ grid on
 
 
 subplot(2,1,2);
-plot(localtime(range),gemiddelde_temp,'g--',localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
+plot(localtime(range),gemiddelde_temp,'g',localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
 legend('Gemeten','Berekende','Opp','Kern');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';

@@ -12,8 +12,9 @@ function cost = costfunction(x,inputs,methode)
         Q_verw = inputs.warmtepomp + inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);
         T_berekend(1)   = T_gem(1);
+        
         for i = 1:length(T_gem)-1
-            T_berekend(i+1) = T_berekend(i) + ((Q_zon(i)+Q_verw(i)-(T_berekend(i)-T_buiten(i))./R)./C) .*(t(i+1)-t(i)); 
+            T_berekend(i+1)=T_berekend(i)+((Q_zon(i)+Q_verw(i)-(T_berekend(i)-T_buiten(i))./R)./C).*(t(i+1)-t(i)); 
         end
     end
     

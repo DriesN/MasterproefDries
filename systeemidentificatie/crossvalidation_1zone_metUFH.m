@@ -1,5 +1,5 @@
 %crossvalidation
-startdate_crossval = '02/11/2014  17:42:35';
+startdate_crossval = '03/11/2014  17:42:35';
 stopdate_crossval = '14/11/2014 17:58:37';
 
 start_utc_crossval = datenum(startdate_crossval,'dd/mm/yyyy   HH:MM:SS')*3600*24-ref_time;
@@ -21,8 +21,8 @@ end
 gemiddelde_zon_crossval = mean([data.signal(signal_zon(1)).data(range_crossval) data.signal(signal_zon(2)).data(range_crossval) data.signal(signal_zon(3)).data(range_crossval)],2);
 
 %berekent verwarming
-warmtepomp_crossval = data.signal(signal_warmtepomp(1)).data(range_crossval);
-verw_gas_origineel_crossval = data.signal(signal_gas).data(range_crossval);
+warmtepomp_crossval = data.signal(signal_warmtepomp(1)).data(range_crossval).*0.9;
+verw_gas_origineel_crossval = data.signal(signal_gas).data(range_crossval).*0.8;
 verw_gas_crossval = warmtewinsten(verw_gas_origineel_crossval,15);
 
 %smooth datasignalen
@@ -40,7 +40,7 @@ Q_zon_crossval = gemiddelde_zon_crossval.*cf_sol;
 t_crossval = data.time(range_crossval);
 
 for i = 1:length(gemiddelde_temp_crossval)-1        
-    T_berekend_crossval(i+1) = T_berekend_crossval(i) + ((Q_zon_crossval(i)+((T_vloer_crossval(i)-T_berekend_crossval(i))./R_v)-((T_berekend_crossval(i)-gemiddelde_temp_crossval(i))./R))./C).*(t_crossval(i+1)-t_crossval(i));
+    T_berekend_crossval(i+1) = T_berekend_crossval(i) + ((Q_zon_crossval(i)+((T_vloer_crossval(i)-T_berekend_crossval(i))./R_v)-((T_berekend_crossval(i)-buitentemp_crossval(i))./R))./C).*(t_crossval(i+1)-t_crossval(i));
     T_vloer_crossval(i+1) = T_vloer_crossval(i) + ((Q_verw_crossval(i)-((T_vloer_crossval(i)-T_berekend_crossval(i))./R_v))./C_v).*(t_crossval(i+1)-t_crossval(i));
 end
 
@@ -49,7 +49,7 @@ subplot(2,1,1);
 plot(localtime(range_crossval),Q_verw_crossval,'r',localtime(range_crossval),Q_zon_crossval,'g');
 legend('verw','zon');
 legend('boxoff');
-title 'Warmtewinsten {verwarming, zon}';
+title 'Crossvalidation';
 datetick('x','dd')
 ylabel('Q (W)')
 xlabel('tijd (day of the month)')
@@ -57,10 +57,10 @@ grid on
 
 
 subplot(2,1,2);
-plot(localtime(range_crossval),gemiddelde_temp_crossval,'k--',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_vloer_crossval,'b')
+plot(localtime(range_crossval),gemiddelde_temp_crossval,'g',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_vloer_crossval,'b')
 legend('Gemeten','Berekende','Vloer');
 legend('boxoff');
-title 'Gemeten en berekende temperatuur';
+title 'Crossvalidation';
 datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')

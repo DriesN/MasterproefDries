@@ -104,7 +104,7 @@ grid on
 
 
 subplot(2,1,2);
-plot(localtime(range),gemiddelde_temp,'k--',localtime(range),T_berekend,'k',localtime(range),T_vloer,'b')
+plot(localtime(range),gemiddelde_temp,'g',localtime(range),T_berekend,'k',localtime(range),T_vloer,'b')
 legend('Gemeten','Berekende','Vloer');
 legend('boxoff');
 title 'Gemeten en berekende temperatuur';

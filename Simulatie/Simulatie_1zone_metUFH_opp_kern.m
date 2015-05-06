@@ -130,7 +130,7 @@ end
 figure;
 subplot(2,1,1);
 plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g',localtime(range),Q_intern,'b');
-legend('verw','zon','int');
+legend('verw','zon','int','Location','southwest','Orientation','Horizontal');
 legend('boxoff');
 title 'Warmtewinsten';
 datetick('x','dd')
@@ -138,9 +138,8 @@ ylabel('Q (W)')
 xlabel('tijd (day of the month)')
 grid on
 
-
 subplot(2,1,2);
-plot(localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
+plot(localtime(range),T_berekend,'g',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
 legend('Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
 legend('boxoff');
 title 'Simulatie';
@@ -148,9 +147,3 @@ datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')
 grid on    
-    
-    
-    
-    
-    
-    

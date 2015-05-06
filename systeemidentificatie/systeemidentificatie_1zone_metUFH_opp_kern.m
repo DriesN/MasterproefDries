@@ -122,9 +122,9 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range),gemiddelde_temp,'g',localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
-legend('Gemeten','Berekende','Opp','Kern');
+legend('Gemeten','Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
 legend('boxoff');
-title 'Gemeten en berekende temperatuur';
+title 'Systeemidentificatie';
 datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')

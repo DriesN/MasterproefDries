@@ -66,7 +66,7 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range_crossval),gemiddelde_temp_crossval,'g',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_opp_crossval,'b',localtime(range_crossval),T_kern_crossval,'r')
-legend('Gemeten','Berekende','Opp','Kern');
+legend('Gemeten','Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
 legend('boxoff');
 title 'Crossvalidation';
 datetick('x','dd')

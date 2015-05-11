@@ -73,14 +73,14 @@ C_opp =2.7810e+06;
 T_berekend = zeros(length(range),1);
 T_opp = zeros(length(range),1);
 T_kern = zeros(length(range),1);
-T_berekend(1) = 21;
-T_opp(1) = 21;
-T_kern(1) = 21;
+T_berekend(1) = 22;  % begin met wat reserve
+T_opp(1) = 22;
+T_kern(1) = 22;
 Q_zon = gemiddelde_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
 
 
-%Gewenste temperatuur
+% Gewenste temperatuur
 T_gewenst = zeros(length(range),1);
 for i=1:length(range)
     if time_in_hours(i)>=7 && time_in_hours(i)<22
@@ -94,43 +94,27 @@ verschil = zeros(length(range),1);
 verschil(1) = T_berekend(1)-T_gewenst(1);
 Q_verw = zeros(length(range),1);
 Q_gas = zeros(length(range),1);
+Q_hp = zeros(length(range),1);
 warmtepomp = zeros(length(range),1);
 
-%warmtevraag berekenen afh. van de buitentemp (gas <--> warmtepomp)
-if buitentemp(1)<5
-    Q_gas(1) = warmtevraag_berekening_gas(verschil(1));
-    Q_verw(1) = Q_gas(1);
-    warmtepomp(1) = 0;
-else
-    warmtepomp(1) = warmtevraag_berekening_WP(verschil(1));
-    Q_verw(1) = warmtepomp(1).*((308.15./(35-buitentemp(1))).*cf_COP);
-    Q_gas(1) = 0;
-end
+%% Berekening T_berekend uit het model
+for i = 1:length(range)-1
+    [Q_gas(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i));
+    Q_verw(i) = Q_gas(i) + Q_hp(i);
     
-%Berekening T_berekend uit het model
-for i = 1:length(range)-1      
+    
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
     T_opp(i+1) = T_opp(i) + ((Q_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(data.time(i+1)-data.time(i));
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
     verschil(i+1) = T_berekend(i+1)-T_gewenst(i+1);
-    
-    if buitentemp(i+1)<5
-        Q_gas(i+1) = warmtevraag_berekening_gas(verschil(i+1));
-        Q_verw(i+1) = Q_gas(i+1);
-        warmtepomp(i+1) = 0;
-    else
-        warmtepomp(i+1) = warmtevraag_berekening_WP(verschil(i+1));
-        Q_verw(i+1) = warmtepomp(i+1).*((308.15./(35-buitentemp(i+1))).*cf_COP);
-        Q_gas(i+1) = 0;
-    end
 
 end
-
+W_hp = Q_hp./((308.15./(35-buitentemp)).*cf_COP);
 
 figure;
 subplot(2,1,1);
-plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g',localtime(range),Q_intern,'b');
-legend('verw','zon','int','Location','southwest','Orientation','Horizontal');
+plot(localtime(range),Q_gas,'r',localtime(range),Q_hp,'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
+legend('gas','hp','zon','int','Location','southwest','Orientation','Horizontal');
 legend('boxoff');
 title 'Warmtewinsten';
 datetick('x','dd')
@@ -139,11 +123,11 @@ xlabel('tijd (day of the month)')
 grid on
 
 subplot(2,1,2);
-plot(localtime(range),T_berekend,'g',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
+plot(localtime(range),T_berekend,'g',localtime(range),T_opp,'b',localtime(range),T_kern,'r',localtime(range),T_gewenst,'k--')
 legend('Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
 legend('boxoff');
 title 'Simulatie';
 datetick('x','dd')
 ylabel('temperatuur (degC)')
 xlabel('tijd (day of the month)')
-grid on    
+grid on

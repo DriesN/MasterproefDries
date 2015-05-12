@@ -2,9 +2,9 @@ clc;clear;close all;
 addpath('../lib');
 
 %Ingeven welke csv-file, begin- en einddatum simulatie
-filename = '../data/knxcontrol_measurements_20141101_20141214.csv';
-start_date = '15/11/2014  17:42:35';
-stop_date = '30/11/2014 17:58:37';
+filename = '../data/knxcontrol_measurements_20140901_20150512.csv';
+start_date = '01/10/2014  17:42:35';
+stop_date = '01/03/2015 17:58:37';
 
 % load data
 data = load_database_measurements(filename);
@@ -105,7 +105,7 @@ for i = 1:length(range)-1
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
 end
 
-
+% Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
 sum(W_hp.*diff(data.time([range(1)-1, range])))/(1000*3600)
 sum(Q_gas.*diff(data.time([range(1)-1, range])))/(1000*3600)
 

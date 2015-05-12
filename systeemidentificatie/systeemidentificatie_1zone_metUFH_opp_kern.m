@@ -58,7 +58,7 @@ else
 end
 
 %calculate average solarenergy in the 3 zones
-gemiddelde_zon = mean([data.signal(signal_zon(1)).data(range) data.signal(signal_zon(2)).data(range) data.signal(signal_zon(3)).data(range)],2);
+totale_zon = data.signal(signal_zon(1)).data(range) + data.signal(signal_zon(2)).data(range) + data.signal(signal_zon(3)).data(range);
 
 %calculate average internal heatflow in the 3 zones
 gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(signal_intern(2)).data(range) data.signal(signal_intern(3)).data(range)],2); 
@@ -73,13 +73,13 @@ buitentemp = smooth(buitentemp,'rlowess');
 gemiddelde_temp = smooth(gemiddelde_temp,'rlowess');
 
 %create inputstructure
-inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddelde_zon},'warmtepomp',{warmtepomp},'Q_gas',{verw_gas}, 'Q_intern',{gemiddelde_intern},'t',{data.time(range)});
+inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_zon},'warmtepomp',{warmtepomp},'Q_gas',{verw_gas}, 'Q_intern',{gemiddelde_intern},'t',{data.time(range)});
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
 x0 = [0.001, 10e6,0.00001, 1e8, 0.5, 1  , 0.0001, 10e6, 21, 21];
 lb = [0    , 1e6, 0      , 1e7, 0.1, 0.5, 0     , 1e6 , 20, 20];
-ub = [0.01 , 1e8, 0.0001 , 1e9, 0.8, 1.5, 0.001 , 1e8 , 26, 26];
+ub = [0.01 , 1e8, 0.0001 , 1e9, 0.8, 1.1, 0.001 , 1e8 , 26, 26];
 
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 T_kern = zeros(length(gemiddelde_temp),1);
@@ -98,7 +98,7 @@ T_opp(1) = x(10);
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
 Q_verw = warmtepomp.*((308.15./(35-buitentemp)).*cf_COP) + verw_gas;
-Q_zon = gemiddelde_zon.*cf_sol;
+Q_zon = totale_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
 
 for i = 1:length(gemiddelde_temp)-1        

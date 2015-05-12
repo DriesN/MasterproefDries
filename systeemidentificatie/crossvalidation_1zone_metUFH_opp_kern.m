@@ -21,7 +21,7 @@ end
 gemiddelde_intern_crossval = mean([data.signal(signal_intern(1)).data(range_crossval) data.signal(signal_intern(2)).data(range_crossval) data.signal(signal_intern(3)).data(range_crossval)],2); 
 
 %berekent gemiddelde zonne-instraling, crossvalidation period
-gemiddelde_zon_crossval = mean([data.signal(signal_zon(1)).data(range_crossval) data.signal(signal_zon(2)).data(range_crossval) data.signal(signal_zon(3)).data(range_crossval)],2);
+totale_zon_crossval = data.signal(signal_zon(1)).data(range_crossval) + data.signal(signal_zon(2)).data(range_crossval) + data.signal(signal_zon(3)).data(range_crossval);
 
 %berekent verwarming
 warmtepomp_crossval = data.signal(signal_warmtepomp(1)).data(range_crossval).*0.9;
@@ -41,13 +41,13 @@ T_kern_crossval(1) = gemiddelde_temp_crossval(1);
 T_opp_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_opp_crossval(1) = gemiddelde_temp_crossval(1);
 Q_verw_crossval = warmtepomp_crossval.*((308.15./(35-buitentemp_crossval)).*cf_COP) + verw_gas_crossval;
-Q_zon_crossval = gemiddelde_zon_crossval.*cf_sol;
+Q_zon_crossval = totale_zon_crossval.*cf_sol;
 Q_intern_crossval = gemiddelde_intern_crossval;
 t_crossval = data.time(range_crossval);
     
 for i = 1:length(gemiddelde_temp_crossval)-1        
     T_berekend_crossval(i+1) = T_berekend_crossval(i) + ((Q_intern_crossval(i)+((T_opp_crossval(i)-T_berekend_crossval(i))./R_opp)-((T_berekend_crossval(i)-buitentemp_crossval(i))./R))./C).*(t_crossval(i+1)-t_crossval(i));
-    T_opp_crossval(i+1) = T_opp_crossval(i) + ((gemiddelde_zon_crossval(i)+((T_kern_crossval(i)-T_opp_crossval(i))./R_kern)-((T_opp_crossval(i)-T_berekend_crossval(i))./R_opp))./C_opp).*(t_crossval(i+1)-t_crossval(i));
+    T_opp_crossval(i+1) = T_opp_crossval(i) + ((Q_zon_crossval(i)+((T_kern_crossval(i)-T_opp_crossval(i))./R_kern)-((T_opp_crossval(i)-T_berekend_crossval(i))./R_opp))./C_opp).*(t_crossval(i+1)-t_crossval(i));
     T_kern_crossval(i+1) = T_kern_crossval(i) + ((Q_verw_crossval(i)-((T_kern_crossval(i)-T_opp_crossval(i))./R_kern))./C_kern).*(t_crossval(i+1)-t_crossval(i));
 end
 

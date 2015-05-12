@@ -52,7 +52,7 @@ else
 end
 
 %berekenen gemiddelde zonne-instraling in de 3 zones
-gemiddelde_zon = mean([data.signal(signal_zon(1)).data(range) data.signal(signal_zon(2)).data(range) data.signal(signal_zon(3)).data(range)],2);
+totale_zon = data.signal(signal_zon(1)).data(range) + data.signal(signal_zon(2)).data(range) + data.signal(signal_zon(3)).data(range);
 
 %berekenen gemiddelde interne warmtewinsten in de 3 zones
 gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(signal_intern(2)).data(range) data.signal(signal_intern(3)).data(range)],2); 
@@ -61,14 +61,14 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 buitentemp = smooth(buitentemp,'rlowess');
 
 %definiëren van de modelparameters
-R = 0.0029;  %K/W
-C = 1.0579e+07;     %W/K
-R_kern = 2.6951e-05;
-C_kern =1.9262e+08;
-cf_COP = 0.4701;
-cf_sol =0.8905;
-R_opp =2.2675e-05;
-C_opp =2.7810e+06;
+R = 0.0025;  %K/W
+C = 1.6159e+07;     %W/K
+R_kern = 4.4415e-05;
+C_kern =2.3162e+08;
+cf_COP = 0.5504;
+cf_sol =0.6176;
+R_opp =7.8177e-06;
+C_opp =3.1378e+07;
 
 T_berekend = zeros(length(range),1);
 T_opp = zeros(length(range),1);
@@ -76,7 +76,7 @@ T_kern = zeros(length(range),1);
 T_berekend(1) = 22;  % begin met wat reserve
 T_opp(1) = 22;
 T_kern(1) = 22;
-Q_zon = gemiddelde_zon.*cf_sol;
+Q_zon = totale_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
 
 
@@ -90,30 +90,28 @@ for i=1:length(range)
     end
 end
 
-verschil = zeros(length(range),1);
-verschil(1) = T_berekend(1)-T_gewenst(1);
 Q_verw = zeros(length(range),1);
 Q_gas = zeros(length(range),1);
 Q_hp = zeros(length(range),1);
-warmtepomp = zeros(length(range),1);
+W_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i));
-    Q_verw(i) = Q_gas(i) + Q_hp(i);
-    
+    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP);
+    Q_verw(i) = Q_gas(i) + W_hp(i)*((308.15/(35-buitentemp(i)))*cf_COP);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
     T_opp(i+1) = T_opp(i) + ((Q_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(data.time(i+1)-data.time(i));
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
-    verschil(i+1) = T_berekend(i+1)-T_gewenst(i+1);
-
 end
-W_hp = Q_hp./((308.15./(35-buitentemp)).*cf_COP);
+
+
+sum(W_hp.*diff(data.time([range(1)-1, range])))/(1000*3600)
+sum(Q_gas.*diff(data.time([range(1)-1, range])))/(1000*3600)
 
 figure;
 subplot(2,1,1);
-plot(localtime(range),Q_gas,'r',localtime(range),Q_hp,'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
+plot(localtime(range),Q_gas,'r',localtime(range),W_hp.*((308.15./(35-buitentemp)).*cf_COP),'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
 legend('gas','hp','zon','int','Location','southwest','Orientation','Horizontal');
 legend('boxoff');
 title 'Warmtewinsten';

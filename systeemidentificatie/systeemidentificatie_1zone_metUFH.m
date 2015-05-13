@@ -50,7 +50,7 @@ else
 end
 
 %berekent gemiddelde zonne-instraling in de 3 zones
-gemiddelde_zon = mean([data.signal(signal_zon(1)).data(range) data.signal(signal_zon(2)).data(range) data.signal(signal_zon(3)).data(range)],2);
+totale_zon = data.signal(signal_zon(1)).data(range) + data.signal(signal_zon(2)).data(range) + data.signal(signal_zon(3)).data(range);
 
  
 %berekent verwarming
@@ -63,13 +63,14 @@ buitentemp = smooth(buitentemp,'rlowess');
 gemiddelde_temp = smooth(gemiddelde_temp,'rlowess');
 
 %create inputstructure
-inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{gemiddelde_zon},'warmtepomp',{warmtepomp},'Q_gas',{verw_gas},'t',{data.time(range)});
+inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_zon},'warmtepomp',{warmtepomp},'Q_gas',{verw_gas},'t',{data.time(range)});
 
 
 %optimalisatie één zone met vloerverwarming
-x0 = [0.001,1e6 ,0.001,10e6,0.5,  1,21];
-lb = [0    ,1e6 ,0    ,1e6 ,0.1,0.5,16];
-ub = [1    ,10e7,1    ,1e8 ,0.8,1.0,26];
+x0 = [0.001,10e6,0.0001,1e8,0.5,1  ,21];
+lb = [0    ,1e6 ,0     ,1e7,0.1,0.5,16];
+ub = [0.01 ,1e8 ,0.001 ,1e9,0.8,1.1,26];
+
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 
 T_vloer = zeros(length(inp.T_gem),1);

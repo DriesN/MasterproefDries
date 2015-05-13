@@ -18,7 +18,7 @@ else
 end
 
 %berekent gemiddelde zonne-instraling, crossvalidation period
-gemiddelde_zon_crossval = mean([data.signal(signal_zon(1)).data(range_crossval) data.signal(signal_zon(2)).data(range_crossval) data.signal(signal_zon(3)).data(range_crossval)],2);
+totale_zon_crossval = data.signal(signal_zon(1)).data(range_crossval) + data.signal(signal_zon(2)).data(range_crossval) + data.signal(signal_zon(3)).data(range_crossval);
 
 %berekent verwarming
 warmtepomp_crossval = data.signal(signal_warmtepomp(1)).data(range_crossval).*0.9;
@@ -34,7 +34,7 @@ gemiddelde_temp_crossval = smooth(gemiddelde_temp_crossval,'rlowess');
 T_berekend_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_berekend_crossval(1) = gemiddelde_temp_crossval(1);
 Q_verw_crossval = warmtepomp_crossval.*((308.15./(35-buitentemp_crossval)).*cf_COP) + verw_gas_crossval;
-Q_zon_crossval = gemiddelde_zon_crossval.*cf_sol;
+Q_zon_crossval = totale_zon_crossval.*cf_sol;
 t_crossval = data.time(range_crossval);
 
 for i = 1:length(gemiddelde_temp_crossval)-1        

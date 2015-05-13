@@ -1,5 +1,5 @@
 %crossvalidation
-startdate_crossval = '03/11/2014  17:42:35';
+startdate_crossval = '02/11/2014  17:42:35';
 stopdate_crossval = '14/11/2014 17:58:37';
 
 start_utc_crossval = datenum(startdate_crossval,'dd/mm/yyyy   HH:MM:SS')*3600*24-ref_time;

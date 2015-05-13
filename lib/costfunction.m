@@ -8,8 +8,10 @@ function cost = costfunction(x,inputs,methode)
     
     %solve differential equation (numerical) --> 1 zone
     if strcmp(methode, 'systeemidentificatie_1zone')
-        Q_zon = inputs.Q_zon;
-        Q_verw = inputs.warmtepomp + inputs.Q_gas;
+        cf_COP = x(3);
+        cf_sol = x(4);
+        Q_zon = inputs.Q_zon.*cf_sol;
+        Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);
         T_berekend(1)   = T_gem(1);
         

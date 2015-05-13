@@ -86,10 +86,13 @@ subplot(2,1,1);
 bar([electriciteit_dag electriciteit_nacht electriciteit_totaal gas], 0.3);
 set(gca,'XTickLabel',{'electriciteit_dag','electriciteit_nacht','electriciteit_totaal','gas'});
 title 'Staafdiagram energieverbruik';
+ylabel('Verbruik in kWh')
+grid on
 subplot(2,1,2);
 bar(correctie_factor, 0.2);
 set(gca,'XTickLabel',{'correctiefactor_dag','correctiefactor_nacht','correctiefactor_gas'});
 title 'Staafdiagram correctiefactor';
 colormap summer;
+grid on
 
 

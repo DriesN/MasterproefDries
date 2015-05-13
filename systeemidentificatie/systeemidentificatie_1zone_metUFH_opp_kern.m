@@ -78,8 +78,8 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
 x0 = [0.001, 10e6,0.00001, 1e8, 0.5, 1  , 0.0001, 10e6, 21, 21];
-lb = [0    , 1e6, 0      , 1e7, 0.1, 0.5, 0     , 1e6 , 20, 20];
-ub = [0.01 , 1e8, 0.0001 , 1e9, 0.8, 1.1, 0.001 , 1e8 , 26, 26];
+lb = [0    , 1e6 ,0      , 1e7, 0.1, 0.5, 0     , 1e6 , 20, 20];
+ub = [0.01 , 1e8 ,0.0001 , 1e9, 0.8, 1.1, 0.001 , 1e8 , 26, 26];
 
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 T_kern = zeros(length(gemiddelde_temp),1);

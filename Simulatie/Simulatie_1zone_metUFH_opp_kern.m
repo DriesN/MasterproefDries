@@ -4,7 +4,7 @@ addpath('../lib');
 %Ingeven welke csv-file, begin- en einddatum simulatie
 filename = '../data/knxcontrol_measurements_20140901_20150512.csv';
 start_date = '01/10/2014  17:42:35';
-stop_date = '01/03/2015 17:58:37';
+stop_date = '01/05/2015 17:58:37';
 
 % load data
 data = load_database_measurements(filename);
@@ -61,19 +61,19 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 buitentemp = smooth(buitentemp,'rlowess');
 
 %definiëren van de modelparameters
-R = 0.0025;  %K/W
-C = 1.6159e+07;     %W/K
-R_kern = 4.4415e-05;
-C_kern =2.3162e+08;
-cf_COP = 0.5504;
+R = 0.0025;         %K/W
+C = 1.6159e+07;     %J/K
+R_kern = 4.4415e-05;%K/W
+C_kern =2.3162e+08; %J/K
+cf_COP = 0.5504;    
 cf_sol =0.6176;
-R_opp =7.8177e-06;
-C_opp =3.1378e+07;
+R_opp =7.8177e-06;  %K/W
+C_opp =3.1378e+07;  %J/K
 
 T_berekend = zeros(length(range),1);
 T_opp = zeros(length(range),1);
 T_kern = zeros(length(range),1);
-T_berekend(1) = 22;  % begin met wat reserve
+T_berekend(1) = 22;  
 T_opp(1) = 22;
 T_kern(1) = 22;
 Q_zon = totale_zon.*cf_sol;
@@ -97,7 +97,7 @@ W_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP);
+    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP,'hybride');
     Q_verw(i) = Q_gas(i) + W_hp(i)*((308.15/(35-buitentemp(i)))*cf_COP);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
@@ -106,8 +106,8 @@ for i = 1:length(range)-1
 end
 
 % Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
-sum(W_hp.*diff(data.time([range(1)-1, range])))/(1000*3600)
-sum(Q_gas.*diff(data.time([range(1)-1, range])))/(1000*3600)
+sum(W_hp.*60)/(3600*1000)   %compressorverbruik in kWh
+sum(Q_gas.*60)/(3600*1000)  %gasverbruik in kWh
 
 figure;
 subplot(2,1,1);

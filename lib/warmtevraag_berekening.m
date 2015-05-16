@@ -12,7 +12,7 @@ if strcmp(systeem,'hybride')
     Q_verw = max(0,min(Q1,Q1 + (Q2-Q1)/(T2-T1)*(T_buiten-T1)));
     
     % correctie voor het verschil tussen binnen en buiten temperatuur
-    dQdT = 5000;   % deze moet getuned worden
+    dQdT = 10000 + W_hp_max*((308.15/(35-T_buiten))*cf_COP);   % deze moet getuned worden
     Q_corr = max(0,min(Q1,Q_verw + dQdT*(T_gewenst-T_binnen)));
     
     % verdeling van de warmtevraag

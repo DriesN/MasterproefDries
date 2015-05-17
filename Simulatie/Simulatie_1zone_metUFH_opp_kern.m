@@ -2,9 +2,9 @@ clc;clear;close all;
 addpath('../lib');
 
 %Ingeven welke csv-file, begin- en einddatum simulatie
-filename = '../data/knxcontrol_measurements_20141101_20141214.csv';
-start_date = '01/11/2014  17:42:35';
-stop_date = '30/11/2014 17:58:37';
+filename = '../data/knxcontrol_measurements_20140901_20150512.csv';
+start_date = '01/10/2014  17:42:35';
+stop_date = '01/05/2015 17:58:37';
 
 % load data
 data = load_database_measurements(filename);
@@ -97,7 +97,7 @@ W_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP,'warmtepomp');
+    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP,'hybride');
     Q_verw(i) = Q_gas(i) + W_hp(i)*((308.15/(35-buitentemp(i)))*cf_COP);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));

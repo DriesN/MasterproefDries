@@ -60,7 +60,8 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 %smooth datasignals
 %buitentemp = smooth(buitentemp,'rlowess');
 
-%definiëren van de modelparameters
+%% Definiëren van de modelparameters
+
 R = 0.0025;         %K/W
 C = 1.6159e+07;     %J/K
 R_kern = 4.4415e-05;%K/W
@@ -84,7 +85,7 @@ Q_intern = gemiddelde_intern;
 T_gewenst = zeros(length(range),1);
 for i=1:length(range)
     if time_in_hours(i)>=7 && time_in_hours(i)<22
-        T_gewenst(i) = 21;
+        T_gewenst(i) = 19;
     else
         T_gewenst(i) = 16;
     end
@@ -92,12 +93,11 @@ end
 
 Q_verw = zeros(length(range),1);
 Q_gas = zeros(length(range),1);
-Q_hp = zeros(length(range),1);
 W_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP,'hybride');
+    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP,'gascondensatieketel');
     Q_verw(i) = Q_gas(i) + W_hp(i)*((308.15/(35-buitentemp(i)))*cf_COP);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
@@ -105,15 +105,24 @@ for i = 1:length(range)-1
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
 end
 
-% Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
-sum(W_hp.*60)/(3600*1000)   %compressorverbruik in kWh
-sum(Q_gas.*60)/(3600*1000)  %gasverbruik in kWh
+Q_hp = W_hp*((308.15/(35-buitentemp(i)))*cf_COP);
 
+
+% Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
+disp('Elektriciteitsverbruik warmtepomp [kWh]')
+disp(sum(W_hp.*60)/(3600*1000))   %compressorverbruik in kWh
+disp('Gasverbruik gascondensatieketel [kWh]')
+disp((sum(Q_gas.*60)/(3600*1000))/0.9)  %gasverbruik in kWh
+
+% Seasonal Performance Factor
+disp('SPF')
+disp(sum(Q_hp.*60)/sum(W_hp.*60))
+
+% Plot
 figure;
 subplot(2,1,1);
 plot(localtime(range),Q_gas,'r',localtime(range),W_hp.*((308.15./(35-buitentemp)).*cf_COP),'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
 legend('gas','hp','zon','int','Location','southwest','Orientation','Horizontal');
-legend('boxoff');
 title 'Warmtewinsten';
 datetick('x','dd')
 ylabel('Q (W)')
@@ -122,8 +131,7 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range),T_berekend,'g',localtime(range),T_opp,'b',localtime(range),T_kern,'r',localtime(range),T_gewenst,'k--')
-legend('Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
-legend('boxoff');
+legend('Berekende','Opp','Kern','Gewenste','Location','southwest','Orientation','Horizontal');
 title 'Simulatie';
 datetick('x','dd')
 ylabel('temperatuur (degC)')

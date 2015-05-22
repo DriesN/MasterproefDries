@@ -45,8 +45,8 @@ function cost = costfunction(x,inputs,methode)
     if strcmp(methode, 'systeemidentificatie_1zone_metUFH_opp_kern')
         T_kern = zeros(length(T_gem),1);
         T_opp = zeros(length(T_gem),1);
-        T_kern(1) = x(9);
-        T_opp(1) = x(10);
+        T_kern(1) = x(10);
+        T_opp(1) = x(11);
         R_kern = x(3);
         C_kern = x(4);
         A = x(5);

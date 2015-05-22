@@ -78,10 +78,10 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
 x0 = [0.001, 10e6,0.00001, 1e8, 0.0145, -0.1726,1  , 0.0001, 10e6, 21, 21];
-lb = [0    , 1e6 ,0      , 1e7, 0.014 , -0.173 ,0.5, 0     , 1e6 , 20, 20];
-ub = [0.01 , 1e8 ,0.0001 , 1e9, 0.015 , -0.172 ,1.1, 0.001 , 1e8 , 26, 26];
+lb = [0    , 1e6 ,0      , 1e7, 0.01  , -0.2   ,0.5, 0     , 1e6 , 20, 20];
+ub = [0.01 , 1e8 ,0.0001 , 1e9, 0.02  , -0.1   ,1.5, 0.001 , 1e8 , 26, 26];
 
-[x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
+[x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',100000,'MaxIter',100000));
 T_kern = zeros(length(gemiddelde_temp),1);
 T_opp = zeros(length(gemiddelde_temp),1);
 R = x(1)
@@ -133,4 +133,4 @@ grid on
 
 
 %crossvalidation
-%crossvalidation_1zone_metUFH_opp_kern;
+crossvalidation_1zone_metUFH_opp_kern;

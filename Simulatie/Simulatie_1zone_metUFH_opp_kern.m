@@ -62,14 +62,15 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 
 %% Definiëren van de modelparameters
 
-R = 0.0025;         %K/W
-C = 1.6159e+07;     %J/K
-R_kern = 4.4415e-05;%K/W
-C_kern =2.3162e+08; %J/K
-cf_COP = 0.5504;    
-cf_sol =0.6176;
-R_opp =7.8177e-06;  %K/W
-C_opp =3.1378e+07;  %J/K
+R = 0.0032;         %K/W
+C = 9.2811e+06;     %J/K
+R_kern = 2.3307e-06;%K/W
+C_kern =1.9334e+08; %J/K
+A = 0.0153;
+B = -0.1913;
+cf_sol =0.5067;
+R_opp =4.1898e-05;  %K/W
+C_opp =1.484e+07;  %J/K
 
 T_berekend = zeros(length(range),1);
 T_opp = zeros(length(range),1);
@@ -97,15 +98,15 @@ W_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),cf_COP,'gascondensatieketel');
-    Q_verw(i) = Q_gas(i) + W_hp(i)*((308.15/(35-buitentemp(i)))*cf_COP);
+    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,'hybride');
+    Q_verw(i) = Q_gas(i) + W_hp(i)*(1/(A*(35-buitentemp(i))+B));
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
     T_opp(i+1) = T_opp(i) + ((Q_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(data.time(i+1)-data.time(i));
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
 end
 
-Q_hp = W_hp.*((308.15./(35-buitentemp))*cf_COP);
+Q_hp = W_hp.*(1./(A.*(35-buitentemp)+B));
 
 
 % Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
@@ -121,7 +122,7 @@ disp(sum(Q_hp.*60)/sum(W_hp.*60))
 % Plot
 figure;
 subplot(2,1,1);
-plot(localtime(range),Q_gas,'r',localtime(range),W_hp.*((308.15./(35-buitentemp)).*cf_COP),'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
+plot(localtime(range),Q_gas,'r',localtime(range),W_hp.*(1./(A.*(35-buitentemp)+B)),'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
 legend('gas','hp','zon','int','Location','southwest','Orientation','Horizontal');
 title 'Warmtewinsten';
 datetick('x','dd')

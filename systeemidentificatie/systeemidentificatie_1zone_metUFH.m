@@ -54,8 +54,8 @@ totale_zon = data.signal(signal_zon(1)).data(range) + data.signal(signal_zon(2))
 
  
 %berekent verwarming
-warmtepomp = data.signal(signal_warmtepomp(1)).data(range);
-verw_gas_origineel = data.signal(signal_gas).data(range);
+warmtepomp = data.signal(signal_warmtepomp(1)).data(range).*0.9;
+verw_gas_origineel = data.signal(signal_gas).data(range).*0.8;
 verw_gas = warmtewinsten(verw_gas_origineel,15);
 
 %smooth datasignalen

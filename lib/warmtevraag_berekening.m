@@ -17,7 +17,7 @@ if strcmp(systeem,'hybride')
     Q_corr = max(0,min(Q1,Q_verw + dQdT*(T_gewenst-T_binnen)));
     
     % verdeling van de warmtevraag
-    if T_buiten > 0
+    if T_buiten > -18
         W_hp  = min(W_hp_max,Q_corr/((308.15/(35-T_buiten))*cf_COP));
         Q_gas = Q_corr-(W_hp*(308.15/(35-T_buiten))*cf_COP);
     else

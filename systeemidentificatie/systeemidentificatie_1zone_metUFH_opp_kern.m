@@ -77,9 +77,9 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
-x0 = [0.001, 10e6,0.00001, 1e8, 0.5, 1  , 0.0001, 10e6, 21, 21];
-lb = [0    , 1e6 ,0      , 1e7, 0.1, 0.5, 0     , 1e6 , 20, 20];
-ub = [0.01 , 1e8 ,0.0001 , 1e9, 0.8, 1.1, 0.001 , 1e8 , 26, 26];
+x0 = [0.001, 10e6,0.00001, 1e8, 0.0145, -0.1726,1  , 0.0001, 10e6, 21, 21];
+lb = [0    , 1e6 ,0      , 1e7, 0.014 , -0.173 ,0.5, 0     , 1e6 , 20, 20];
+ub = [0.01 , 1e8 ,0.0001 , 1e9, 0.015 , -0.172 ,1.1, 0.001 , 1e8 , 26, 26];
 
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 T_kern = zeros(length(gemiddelde_temp),1);
@@ -88,16 +88,17 @@ R = x(1)
 C = x(2)
 R_kern = x(3)
 C_kern = x(4)
-cf_COP = x(5)
-cf_sol = x(6)
-R_opp = x(7)
-C_opp = x(8)
-T_kern(1) = x(9);
-T_opp(1) = x(10);
+A = x(5)
+B = x(6)
+cf_sol = x(7)
+R_opp = x(8)
+C_opp = x(9)
+T_kern(1) = x(10);
+T_opp(1) = x(11);
 
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
-Q_verw = warmtepomp.*((308.15./(35-buitentemp)).*cf_COP) + verw_gas;
+Q_verw = warmtepomp.*(1./(A.*(35-buitentemp)+B)) + verw_gas;
 Q_zon = totale_zon.*cf_sol;
 Q_intern = gemiddelde_intern;
 
@@ -132,4 +133,4 @@ grid on
 
 
 %crossvalidation
-crossvalidation_1zone_metUFH_opp_kern;
+%crossvalidation_1zone_metUFH_opp_kern;

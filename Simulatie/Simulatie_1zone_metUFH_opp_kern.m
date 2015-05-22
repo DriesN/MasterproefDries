@@ -85,7 +85,7 @@ Q_intern = gemiddelde_intern;
 T_gewenst = zeros(length(range),1);
 for i=1:length(range)
     if time_in_hours(i)>=7 && time_in_hours(i)<22
-        T_gewenst(i) = 19;
+        T_gewenst(i) = 21;
     else
         T_gewenst(i) = 16;
     end
@@ -105,7 +105,7 @@ for i = 1:length(range)-1
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
 end
 
-Q_hp = W_hp*((308.15/(35-buitentemp(i)))*cf_COP);
+Q_hp = W_hp.*((308.15./(35-buitentemp))*cf_COP);
 
 
 % Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel

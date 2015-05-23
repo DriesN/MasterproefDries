@@ -68,6 +68,7 @@ R_kern = 2.3307e-06;%K/W
 C_kern =1.9334e+08; %J/K
 A = 0.0153;
 B = -0.1913;
+COPmax = 6;
 cf_sol =0.5067;
 R_opp =4.1898e-05;  %K/W
 C_opp =1.484e+07;  %J/K
@@ -95,18 +96,16 @@ end
 Q_verw = zeros(length(range),1);
 Q_gas = zeros(length(range),1);
 W_hp = zeros(length(range),1);
-
+Q_hp = zeros(length(range),1);
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,'hybride');
-    Q_verw(i) = Q_gas(i) + W_hp(i)*(1/(A*(35-buitentemp(i))+B));
+    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,'hybride');
+    Q_verw(i) = Q_gas(i) + Q_hp(i);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
     T_opp(i+1) = T_opp(i) + ((Q_zon(i)+((T_kern(i)-T_opp(i))./R_kern)-((T_opp(i)-T_berekend(i))./R_opp))./C_opp).*(data.time(i+1)-data.time(i));
     T_kern(i+1) = T_kern(i) + ((Q_verw(i)-((T_kern(i)-T_opp(i))./R_kern))./C_kern).*(data.time(i+1)-data.time(i));
 end
-
-Q_hp = W_hp.*(1./(A.*(35-buitentemp)+B));
 
 
 % Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
@@ -122,7 +121,7 @@ disp(sum(Q_hp.*60)/sum(W_hp.*60))
 % Plot
 figure;
 subplot(2,1,1);
-plot(localtime(range),Q_gas,'r',localtime(range),W_hp.*(1./(A.*(35-buitentemp)+B)),'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
+plot(localtime(range),Q_gas,'r',localtime(range),Q_hp,'g',localtime(range),Q_zon,'y',localtime(range),Q_intern,'b');
 legend('gas','hp','zon','int','Location','southwest','Orientation','Horizontal');
 title 'Warmtewinsten';
 datetick('x','dd')

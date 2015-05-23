@@ -35,7 +35,7 @@ T_berekend_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_vloer_crossval = zeros(length(gemiddelde_temp_crossval),1);
 T_berekend_crossval(1) = gemiddelde_temp_crossval(1);
 T_vloer_crossval(1) = gemiddelde_temp_crossval(1);
-Q_verw_crossval = warmtepomp_crossval.*((308.15./(35-buitentemp_crossval)).*cf_COP) + verw_gas_crossval;
+Q_verw_crossval = warmtepomp_crossval.*min(COPmax,abs(1./(A.*(35-buitentemp_crossval)+B))).*cf_WP + verw_gas_crossval;
 Q_zon_crossval = totale_zon_crossval.*cf_sol;
 t_crossval = data.time(range_crossval);
 
@@ -47,8 +47,7 @@ end
 figure;
 subplot(2,1,1);
 plot(localtime(range_crossval),Q_verw_crossval,'r',localtime(range_crossval),Q_zon_crossval,'g');
-legend('verw','zon');
-legend('boxoff');
+legend('verw','zon','Location','northwest','Orientation','Horizontal');
 title 'Crossvalidation';
 datetick('x','dd')
 ylabel('Q (W)')
@@ -58,8 +57,7 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range_crossval),gemiddelde_temp_crossval,'g',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_vloer_crossval,'b')
-legend('Gemeten','Berekende','Vloer');
-legend('boxoff');
+legend('Gemeten','Berekende','Vloer','Location','southwest','Orientation','Horizontal');
 title 'Crossvalidation';
 datetick('x','dd')
 ylabel('temperatuur (degC)')

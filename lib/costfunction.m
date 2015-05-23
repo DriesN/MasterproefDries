@@ -8,10 +8,13 @@ function cost = costfunction(x,inputs,methode)
     
     %solve differential equation (numerical) --> 1 zone
     if strcmp(methode, 'systeemidentificatie_1zone')
-        cf_COP = x(3);
-        cf_sol = x(4);
+        A = x(3);
+        B = x(4);
+        cf_sol = x(5);
+        COPmax = x(6);
+        cf_WP = x(7);
         Q_zon = inputs.Q_zon.*cf_sol;
-        Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
+        Q_verw = inputs.warmtepomp.*min(COPmax,abs(1./(A.*(35-T_buiten)+B))).*cf_WP + inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);
         T_berekend(1)   = T_gem(1);
         
@@ -23,14 +26,17 @@ function cost = costfunction(x,inputs,methode)
     %solve differential equation (numerical) --> 1 zone met UFH
     if strcmp(methode, 'systeemidentificatie_1zone_metUFH')
         T_vloer = zeros(length(T_gem),1);
-        T_vloer(1) = x(7);
+        T_vloer(1) = x(8);
         R_v = x(3);
         C_v = x(4);
-        cf_COP = x(5);
-        cf_sol = x(6);
+        A = x(5);
+        B = x(6);
+        cf_sol = x(7);
+        COPmax = x(9);
+        cf_WP = x(10);
         
         Q_zon = inputs.Q_zon.*cf_sol;
-        Q_verw = inputs.warmtepomp.*((308.15./(35-T_buiten)).*cf_COP) + inputs.Q_gas;
+        Q_verw = inputs.warmtepomp.*min(COPmax,abs(1./(A.*(35-T_buiten)+B))).*cf_WP + inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);        
         T_berekend(1) = T_gem(1);
         

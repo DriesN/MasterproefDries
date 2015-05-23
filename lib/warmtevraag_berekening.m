@@ -8,7 +8,7 @@ if strcmp(systeem,'hybride')
     T1 = -10;
 	COP = min(COPmax,abs(1/(A*(35-T_buiten)+B)));
     Q1 = Q_gas_max + W_hp_max*COP*cf_WP; % deze moet getuned worden
-    T2 = 20;    % deze moet getuned worden
+    T2 = 15;    % deze moet getuned worden
     Q2 = 0;
     
     Q_verw = max(0,min(Q1,Q1 + (Q2-Q1)/(T2-T1)*(T_buiten-T1)));
@@ -39,7 +39,7 @@ if strcmp(systeem,'warmtepomp')
     T1 = -10;
 	COP = min(COPmax,abs(1/(A*(35-T_buiten)+B)));
     Q1 = W_hp_max*COP*cf_WP; % deze moet getuned worden
-    T2 = 20;    % deze moet getuned worden
+    T2 = 15;    % deze moet getuned worden
     Q2 = 0;
     
     Q_verw = max(0,min(Q1,Q1 + (Q2-Q1)/(T2-T1)*(T_buiten-T1)));
@@ -61,7 +61,7 @@ if strcmp(systeem,'gascondensatieketel')
     Q_gas_max = 15000;
     T1 = -10;
     Q1 = Q_gas_max; % deze moet getuned worden
-    T2 = 20;    % deze moet getuned worden
+    T2 = 15;    % deze moet getuned worden
     Q2 = 0;
     
     Q_verw = max(0,min(Q1,Q1 + (Q2-Q1)/(T2-T1)*(T_buiten-T1)));

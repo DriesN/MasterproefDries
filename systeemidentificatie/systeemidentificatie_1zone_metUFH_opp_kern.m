@@ -79,7 +79,7 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 %optimalisatie één zone met vloerverwarming (splitsing oppervlakte, kern)
 x0 = [0.003 , 10e6,0.00001 , 1e8, 0.0145 , -0.1726,1  , 0.00001  , 10e6, 21, 21, 6 ,0.7];
 lb = [0.001 , 1e6 ,0.000001, 9e7, 0.01   , -0.2   ,0.5, 0.000001 , 1e6 , 20, 20, 5 ,0.6];
-ub = [0.004 , 1e8 ,0.0001  , 1e9, 0.1    , 0      ,1.1, 0.0001   , 1e8 , 26, 26, 10,1  ];
+ub = [0.004 , 9e7 ,0.0001  , 1e9, 0.1    , 0      ,1.1, 0.0001   , 9e7 , 26, 26, 10,1  ];
 
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH_opp_kern'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',100000,'MaxIter',100000));
 T_kern = zeros(length(gemiddelde_temp),1);
@@ -115,8 +115,7 @@ end
 figure;
 subplot(2,1,1);
 plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g',localtime(range),Q_intern,'b');
-legend('verw','zon','int');
-legend('boxoff');
+legend('verw','zon','int','Location','northwest','Orientation','Horizontal');
 title 'Warmtewinsten';
 datetick('x','dd')
 ylabel('Q (W)')
@@ -126,8 +125,7 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range),gemiddelde_temp,'g',localtime(range),T_berekend,'k',localtime(range),T_opp,'b',localtime(range),T_kern,'r')
-legend('Gemeten','Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
-legend('boxoff');
+legend('Gemeten','Berekende','Opp','Kern','Location','southwest','Orientation','Horizontal');
 title 'Systeemidentificatie';
 datetick('x','dd')
 ylabel('temperatuur (degC)')

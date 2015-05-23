@@ -55,8 +55,7 @@ end
 figure;
 subplot(2,1,1);
 plot(localtime(range_crossval),Q_verw_crossval,'r',localtime(range_crossval),Q_zon_crossval,'g',localtime(range_crossval),Q_intern_crossval,'b');
-legend('verw','zon','int');
-legend('boxoff');
+legend('verw','zon','int','Location','northwest','Orientation','Horizontal');
 title 'Crossvalidation';
 datetick('x','dd')
 ylabel('Q (W)')
@@ -66,8 +65,7 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range_crossval),gemiddelde_temp_crossval,'g',localtime(range_crossval),T_berekend_crossval,'k',localtime(range_crossval),T_opp_crossval,'b',localtime(range_crossval),T_kern_crossval,'r')
-legend('Gemeten','Berekende','Opp','Kern','Location','northwest','Orientation','Horizontal');
-legend('boxoff');
+legend('Gemeten','Berekende','Opp','Kern','Location','southwest','Orientation','Horizontal');
 title 'Crossvalidation';
 datetick('x','dd')
 ylabel('temperatuur (degC)')

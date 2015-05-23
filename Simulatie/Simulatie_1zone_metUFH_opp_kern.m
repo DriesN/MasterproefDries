@@ -89,7 +89,7 @@ Q_intern = gemiddelde_intern;
 T_gewenst = zeros(length(range),1);
 for i=1:length(range)
     if time_in_hours(i)>=7 && time_in_hours(i)<22
-        T_gewenst(i) = 21;
+        T_gewenst(i) = 20;
     else
         T_gewenst(i) = 16;
     end
@@ -102,7 +102,7 @@ Q_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'hybride');
+    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'warmtepomp');
     Q_verw(i) = Q_gas(i) + Q_hp(i);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
@@ -112,14 +112,19 @@ end
 
 
 % Elektriciteitsverbruik warmtepomp en gasverbruik gascondensatieketel
+rendement_gas = 0.96;
 disp('Elektriciteitsverbruik warmtepomp [kWh]')
 disp(sum(W_hp.*60)/(3600*1000))   %compressorverbruik in kWh
 disp('Gasverbruik gascondensatieketel [kWh]')
-disp((sum(Q_gas.*60)/(3600*1000))/0.9)  %gasverbruik in kWh
+disp((sum(Q_gas.*60)/(3600*1000))/rendement_gas)  %gasverbruik in kWh
 
 % Seasonal Performance Factor
 disp('SPF')
 disp(sum(Q_hp.*60)/sum(W_hp.*60))
+
+%kost
+disp('energiekost [euro]')
+disp(((sum(Q_gas.*60)/(3600*1000))/rendement_gas)*0.06+(sum(W_hp.*60)/(3600*1000))*0.2)
 
 % Plot
 figure;

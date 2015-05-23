@@ -78,19 +78,22 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 
 %optimalisatie één zone
-x0 = [0.001,1e7,0.5,1];
-lb = [0    ,1e6,0.1,0.5];
-ub = [0.01 ,1e8,0.8,1.1];
+x0 = [0.003, 1e8, 0.0145 , -0.1726,1  , 6 , 0.7];
+lb = [0    , 1e7, 0.01   , -0.2   ,0.5, 5 , 0.6];
+ub = [0.004, 1e9, 0.1    , 0      ,1.1, 10, 1  ];
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 R = x(1)
 C = x(2)
-cf_COP = x(3)
-cf_sol = x(4)
+A = x(3)
+B = x(4)
+cf_sol = x(5)
+COPmax = x(6)
+cf_WP = x(7)
 
 T_berekend = zeros(length(gemiddelde_temp),1);
 T_berekend(1) = gemiddelde_temp(1);
 Q_zon = totale_zon.*cf_sol;
-Q_verw = warmtepomp.*((308.15./(35-buitentemp)).*cf_COP) + verw_gas;
+Q_verw = warmtepomp.*min(COPmax,abs(1./(A.*(35-buitentemp)+B))).*cf_WP + verw_gas;
  
 for i = 1:length(gemiddelde_temp)-1
     T_berekend(i+1)=T_berekend(i)+((Q_zon(i)+Q_verw(i)-(T_berekend(i)-buitentemp(i))./R)./C).*(inp.t(i+1)-inp.t(i)); 
@@ -99,8 +102,7 @@ end
 figure;
 subplot(2,1,1);
 plot(localtime(range),Q_verw,'r',localtime(range),Q_zon,'g');
-legend('verw','zon');
-legend('boxoff');
+legend('verw','zon','Location','northwest','Orientation','Horizontal');
 title 'Warmtewinsten';
 datetick('x','dd')
 ylabel('Q (W)')
@@ -110,8 +112,7 @@ grid on
 
 subplot(2,1,2);
 plot(localtime(range),gemiddelde_temp,'g--',localtime(range),T_berekend,'k')
-legend('Gemeten','Berekende');
-legend('boxoff');
+legend('Gemeten','Berekende','Location','southwest','Orientation','Horizontal');
 title 'Gemeten en berekende temperatuur';
 datetick('x','dd')
 ylabel('temperatuur (degC)')

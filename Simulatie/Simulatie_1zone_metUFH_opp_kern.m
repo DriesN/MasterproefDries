@@ -62,28 +62,18 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 
 %% Definiëren van de modelparameters
 
-<<<<<<< HEAD
-R = 0.003;         %K/W
-C = 5.3454e+06;     %J/K
-R_kern = 2.2746e-05;%K/W
-C_kern =3.0603e+08; %J/K
-A = 0.0143;
-B = -0.1768;
-cf_sol =0.5054;
-R_opp =1.6396e-05;  %K/W
-C_opp =4.2155e+06;  %J/K
-=======
-R = 0.0032;         %K/W
-C = 9.2811e+06;     %J/K
-R_kern = 2.3307e-06;%K/W
-C_kern =1.9334e+08; %J/K
-A = 0.0153;
-B = -0.1913;
-COPmax = 6;
-cf_sol =0.5067;
-R_opp =4.1898e-05;  %K/W
-C_opp =1.484e+07;  %J/K
->>>>>>> origin/master
+R = 0.0028;         %K/W
+C = 5.8434e+07;     %J/K
+R_kern = 2.4927e-05; %K/W
+C_kern = 9.5212e+07;%J/K
+A = 0.0128;
+B = -0.1776;
+COPmax = 6.0698;
+cf_sol =0.7217;
+R_opp =2.9494e-06;  %K/W
+C_opp =3.8065e+07;  %J/K
+cf_WP = 0.9953;
+
 
 T_berekend = zeros(length(range),1);
 T_opp = zeros(length(range),1);
@@ -99,9 +89,9 @@ Q_intern = gemiddelde_intern;
 T_gewenst = zeros(length(range),1);
 for i=1:length(range)
     if time_in_hours(i)>=7 && time_in_hours(i)<22
-        T_gewenst(i) = 0;
+        T_gewenst(i) = 21;
     else
-        T_gewenst(i) = 0;
+        T_gewenst(i) = 16;
     end
 end
 
@@ -109,9 +99,10 @@ Q_verw = zeros(length(range),1);
 Q_gas = zeros(length(range),1);
 W_hp = zeros(length(range),1);
 Q_hp = zeros(length(range),1);
+
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,'hybride');
+    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'hybride');
     Q_verw(i) = Q_gas(i) + Q_hp(i);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));

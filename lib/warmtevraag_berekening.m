@@ -1,4 +1,4 @@
-function [Q_gas,W_hp,Q_hp] = warmtevraag_berekening(T_buiten,T_binnen,T_gewenst,A,B,COPmax,systeem)
+function [Q_gas,W_hp,Q_hp] = warmtevraag_berekening(T_buiten,T_binnen,T_gewenst,A,B,COPmax,cf_WP,systeem)
 %% Warmtevraag berekening hybride warmtepompsysteem
 
 if strcmp(systeem,'hybride')
@@ -7,27 +7,27 @@ if strcmp(systeem,'hybride')
     Q_gas_max = 10000;
     T1 = -10;
 	COP = min(COPmax,abs(1/(A*(35-T_buiten)+B)));
-    Q1 = Q_gas_max + W_hp_max*COP; % deze moet getuned worden
+    Q1 = Q_gas_max + W_hp_max*COP*cf_WP; % deze moet getuned worden
     T2 = 20;    % deze moet getuned worden
     Q2 = 0;
     
     Q_verw = max(0,min(Q1,Q1 + (Q2-Q1)/(T2-T1)*(T_buiten-T1)));
     
     % correctie voor het verschil tussen binnen en buiten temperatuur
-    dQdT = Q_gas_max + W_hp_max*COP;   % deze moet getuned worden
+    dQdT = Q_gas_max + W_hp_max*COP*cf_WP;   % deze moet getuned worden
     Q_corr = max(0,min(Q1,Q_verw + dQdT*(T_gewenst-T_binnen)));
     
     % verdeling van de warmtevraag
-    if T_buiten > 2
-        W_hp  = min(W_hp_max,Q_corr/COP);
-        Q_hp = W_hp*COP;
+    if T_buiten > -3.3
+        W_hp  = min(W_hp_max,Q_corr/(COP*cf_WP));
+        Q_hp = W_hp*COP*cf_WP;
         Q_gas = Q_corr-(W_hp*COP);
     else
         % draai de verdeling om, misschien is er meer warmte nodig dan alleen de
         % gasketel kan leveren
         Q_gas = min(Q_gas_max,Q_corr);
-        W_hp = min(W_hp_max,(Q_corr-Q_gas)/COP);
-        Q_hp = W_hp*COP;
+        W_hp = min(W_hp_max,(Q_corr-Q_gas)/(COP*cf_WP));
+        Q_hp = W_hp*COP*cf_WP;
     end
 end
 
@@ -38,7 +38,7 @@ if strcmp(systeem,'warmtepomp')
     W_hp_max = 5000;
     T1 = -10;
 	COP = min(COPmax,abs(1/(A*(35-T_buiten)+B)));
-    Q1 = W_hp_max*COP; % deze moet getuned worden
+    Q1 = W_hp_max*COP*cf_WP; % deze moet getuned worden
     T2 = 20;    % deze moet getuned worden
     Q2 = 0;
     
@@ -49,9 +49,9 @@ if strcmp(systeem,'warmtepomp')
     Q_corr = max(0,min(Q1,Q_verw + dQdT*(T_gewenst-T_binnen)));
     
     % verdeling van de warmtevraag
-    W_hp = min(W_hp_max,Q_corr/COP);
+    W_hp = min(W_hp_max,Q_corr/(COP*cf_WP));
     Q_gas = 0;
-    Q_hp = W_hp*COP;
+    Q_hp = W_hp*COP*cf_WP;
 end
 
 %% Warmtevraag berekening gascondensatieketel

@@ -78,9 +78,9 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 
 %optimalisatie één zone
-x0 = [0.003, 1e8, 0.0145 , -0.1726,1  , 6 , 0.7];
-lb = [0    , 1e7, 0.01   , -0.2   ,0.5, 5 , 0.6];
-ub = [0.004, 1e9, 0.1    , 0      ,1.1, 10, 1  ];
+x0 = [0.003, 1e8, 0.0145, -0.1726,0.7, 6 , 0.7];
+lb = [0    , 1e7, 0.014 , -0.18  ,0.5, 5 , 0.6];
+ub = [0.004, 1e9, 0.015 , -0.17  ,1  , 10, 0.8];
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 R = x(1)
 C = x(2)

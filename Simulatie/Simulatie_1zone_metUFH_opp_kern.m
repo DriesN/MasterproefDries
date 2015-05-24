@@ -62,17 +62,17 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 
 %% Definiëren van de modelparameters
 
-R = 0.0039;         %K/W
-C = 6.7549e+06;     %J/K
-R_kern = 3.2617e-05; %K/W
-C_kern = 1.1865e+08;%J/K
-A = 0.014;
-B = -0.1799;
-COPmax = 5.2115;
-cf_sol =0.5827;
-R_opp =2.4012e-05;  %K/W
-C_opp =1.4433e+07;  %J/K
-cf_WP = 0.7630;
+R = 0.0032; 
+C = 1.8219e+07;   
+R_kern = 8.5854e-06;
+C_kern = 1.2246e+08;
+A = 0.013;
+B = -0.1978;
+COPmax = 6.6588;
+cf_sol =0.5045;
+R_opp =4.0861e-05; 
+C_opp =1.5921e+07;  
+cf_WP = 0.7991;
 
 
 T_berekend = zeros(length(range),1);
@@ -124,7 +124,7 @@ disp(sum(Q_hp.*60)/sum(W_hp.*60))
 
 %kost
 disp('energiekost [euro]')
-disp(((sum(Q_gas.*60)/(3600*1000))/rendement_gas)*0.06+(sum(W_hp.*60)/(3600*1000))*0.2)
+disp(((sum(Q_gas.*60)/(3600*1000))/rendement_gas)*0.06+(sum(W_hp.*60)/(3600*1000))*0.18)
 
 % Plot
 figure;

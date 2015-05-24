@@ -67,9 +67,9 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 
 %optimalisatie één zone met vloerverwarming
-x0 = [0.003, 10e6,0.00001 , 1e8, 0.0145 , -0.1726,1  , 21, 6 ,0.7];
-lb = [0.001, 1e6 ,0.000001, 1e7, 0.01   , -0.2   ,0.5, 20, 5 ,0.6];
-ub = [0.004, 1e8 ,0.0001  , 1e9, 0.1    , 0      ,1.1, 26, 10,1  ];
+x0 = [0.001, 10e6,0.00001 , 1e8, 0.01, -0.1,0.7, 21,6 ,0.7];
+lb = [0    , 1e6 ,0       , 1e7, 0.01, -0.2,0.5, 20,5 ,0.6];
+ub = [0.01 , 1e8 ,0.0001  , 1e9, 0.1 , 0   ,1  , 26,10,0.9];
 
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 
@@ -116,4 +116,4 @@ xlabel('tijd (day of the month)')
 grid on
 
 %crossvalidation
-crossvalidation_1zone_metUFH;
+%crossvalidation_1zone_metUFH;

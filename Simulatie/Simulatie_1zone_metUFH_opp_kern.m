@@ -62,17 +62,17 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 
 %% Definiëren van de modelparameters
 
-R = 0.0028;         %K/W
-C = 5.8434e+07;     %J/K
-R_kern = 2.4927e-05; %K/W
-C_kern = 9.5212e+07;%J/K
-A = 0.0128;
-B = -0.1776;
-COPmax = 6.0698;
-cf_sol =0.7217;
-R_opp =2.9494e-06;  %K/W
-C_opp =3.8065e+07;  %J/K
-cf_WP = 0.9953;
+R = 0.0039;         %K/W
+C = 6.7549e+06;     %J/K
+R_kern = 3.2617e-05; %K/W
+C_kern = 1.1865e+08;%J/K
+A = 0.014;
+B = -0.1799;
+COPmax = 5.2115;
+cf_sol =0.5827;
+R_opp =2.4012e-05;  %K/W
+C_opp =1.4433e+07;  %J/K
+cf_WP = 0.7630;
 
 
 T_berekend = zeros(length(range),1);
@@ -89,7 +89,7 @@ Q_intern = gemiddelde_intern;
 T_gewenst = zeros(length(range),1);
 for i=1:length(range)
     if time_in_hours(i)>=7 && time_in_hours(i)<22
-        T_gewenst(i) = 20;
+        T_gewenst(i) = 21;
     else
         T_gewenst(i) = 16;
     end

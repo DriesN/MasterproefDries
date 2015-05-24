@@ -18,10 +18,10 @@ if strcmp(systeem,'hybride')
     Q_corr = max(0,min(Q1,Q_verw + dQdT*(T_gewenst-T_binnen)));
     
     % verdeling van de warmtevraag
-    if T_buiten > -3.3
+    if T_buiten > 5.12
         W_hp  = min(W_hp_max,Q_corr/(COP*cf_WP));
         Q_hp = W_hp*COP*cf_WP;
-        Q_gas = Q_corr-(W_hp*COP);
+        Q_gas = Q_corr-(W_hp*COP*cf_WP);
     else
         % draai de verdeling om, misschien is er meer warmte nodig dan alleen de
         % gasketel kan leveren
@@ -45,7 +45,7 @@ if strcmp(systeem,'warmtepomp')
     Q_verw = max(0,min(Q1,Q1 + (Q2-Q1)/(T2-T1)*(T_buiten-T1)));
     
     % correctie voor het verschil tussen binnen en buiten temperatuur
-    dQdT = W_hp_max*COP;   % deze moet getuned worden
+    dQdT = W_hp_max*COP*cf_WP;   % deze moet getuned worden
     Q_corr = max(0,min(Q1,Q_verw + dQdT*(T_gewenst-T_binnen)));
     
     % verdeling van de warmtevraag

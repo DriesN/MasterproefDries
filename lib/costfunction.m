@@ -61,7 +61,7 @@ function cost = costfunction(x,inputs,methode)
         R_opp = x(8);
         C_opp = x(9);
         COPmax = x(12);
-        cf_WP = x(13);
+        cf_WP = 1;
         
         Q_intern = inputs.Q_intern;
         Q_zon = inputs.Q_zon.*cf_sol;

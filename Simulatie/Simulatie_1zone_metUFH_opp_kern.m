@@ -62,17 +62,17 @@ gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(
 
 %% Definiëren van de modelparameters
 
-R = 0.0032; 
-C = 1.8219e+07;   
-R_kern = 8.5854e-06;
-C_kern = 1.2246e+08;
-A = 0.013;
-B = -0.1978;
-COPmax = 6.6588;
-cf_sol =0.5045;
-R_opp =4.0861e-05; 
-C_opp =1.5921e+07;  
-cf_WP = 0.7991;
+R = 0.003; 
+C = 1.0529e+07;   
+R_kern = 9.4790e-06;
+C_kern = 1.8882e+08;
+A = 0.0135;
+B = -0.172;
+COPmax = 6.3581;
+cf_sol =0.5883;
+R_opp =4.9568e-05; 
+C_opp =1.0747e+07;  
+cf_WP = 1;
 
 
 T_berekend = zeros(length(range),1);
@@ -102,7 +102,7 @@ Q_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'warmtepomp');
+    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'hybride');
     Q_verw(i) = Q_gas(i) + Q_hp(i);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
@@ -124,7 +124,7 @@ disp(sum(Q_hp.*60)/sum(W_hp.*60))
 
 %kost
 disp('energiekost [euro]')
-disp(((sum(Q_gas.*60)/(3600*1000))/rendement_gas)*0.06+(sum(W_hp.*60)/(3600*1000))*0.18)
+disp(((sum(Q_gas.*60)/(3600*1000))/rendement_gas)*0.06+((sum(W_hp.*60)/(3600*1000))/cf_WP)*0.18)
 
 % Plot
 figure;

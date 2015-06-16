@@ -58,7 +58,7 @@ totale_zon = data.signal(signal_zon(1)).data(range) + data.signal(signal_zon(2))
 gemiddelde_intern = mean([data.signal(signal_intern(1)).data(range) data.signal(signal_intern(2)).data(range) data.signal(signal_intern(3)).data(range)],2); 
 
 %smooth datasignals
-%buitentemp = smooth(buitentemp,'rlowess');
+buitentemp = smooth(buitentemp,'rlowess');
 
 %% Definiëren van de modelparameters
 
@@ -93,6 +93,7 @@ for i=1:length(range)
     else
         T_gewenst(i) = 16;
     end
+    
 end
 
 Q_verw = zeros(length(range),1);
@@ -102,7 +103,7 @@ Q_hp = zeros(length(range),1);
 
 %% Berekening T_berekend uit het model
 for i = 1:length(range)-1
-    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'hybride');
+    [Q_gas(i),W_hp(i),Q_hp(i)] = warmtevraag_berekening(buitentemp(i),T_berekend(i),T_gewenst(i),A,B,COPmax,cf_WP,'warmtepomp');
     Q_verw(i) = Q_gas(i) + Q_hp(i);
     
     T_berekend(i+1) = T_berekend(i) + ((Q_intern(i)+((T_opp(i)-T_berekend(i))./R_opp)-((T_berekend(i)-buitentemp(i))./R))./C).*(data.time(i+1)-data.time(i));
@@ -125,6 +126,25 @@ disp(sum(Q_hp.*60)/sum(W_hp.*60))
 %kost
 disp('energiekost [euro]')
 disp(((sum(Q_gas.*60)/(3600*1000))/rendement_gas)*0.06+((sum(W_hp.*60)/(3600*1000))/cf_WP)*0.18)
+
+%discomfort
+discomfort_ul = zeros(length(range),1);
+discomfort_ll = zeros(length(range),1);
+
+for i=1:length(range)
+if T_berekend(i)>21
+discomfort_ul(i) = T_berekend(i)-21;
+else
+discomfort_ll(i) = 21 - T_berekend(i);
+end
+end
+
+disp('discomfort boven 21°C [Kh]') 
+disp(sum(discomfort_ul.*60)/3600)
+
+disp('discomfort onder 21°C [Kh]') 
+disp(sum(discomfort_ll.*60)/3600)
+
 
 % Plot
 figure;

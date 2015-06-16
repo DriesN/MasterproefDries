@@ -12,7 +12,7 @@ function cost = costfunction(x,inputs,methode)
         B = x(4);
         cf_sol = x(5);
         COPmax = x(6);
-        cf_WP = x(7);
+        cf_WP = 1;
         Q_zon = inputs.Q_zon.*cf_sol;
         Q_verw = inputs.warmtepomp.*min(COPmax,abs(1./(A.*(35-T_buiten)+B))).*cf_WP + inputs.Q_gas;
         T_berekend = zeros(length(T_gem),1);
@@ -33,7 +33,7 @@ function cost = costfunction(x,inputs,methode)
         B = x(6);
         cf_sol = x(7);
         COPmax = x(9);
-        cf_WP = x(10);
+        cf_WP = 1;
         
         Q_zon = inputs.Q_zon.*cf_sol;
         Q_verw = inputs.warmtepomp.*min(COPmax,abs(1./(A.*(35-T_buiten)+B))).*cf_WP + inputs.Q_gas;

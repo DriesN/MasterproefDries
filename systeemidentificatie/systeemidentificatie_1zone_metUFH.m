@@ -67,9 +67,9 @@ inp = struct('T_gem',{gemiddelde_temp},'T_buiten',{buitentemp},'Q_zon',{totale_z
 
 
 %optimalisatie één zone met vloerverwarming
-x0 = [0.001, 10e6,0.00001 , 1e8, 0.01, -0.1,0.7, 21,6 ,0.7];
-lb = [0    , 1e6 ,0       , 1e7, 0.01, -0.2,0.5, 20,5 ,0.6];
-ub = [0.01 , 1e8 ,0.0001  , 1e9, 0.1 , 0   ,1  , 26,10,0.9];
+x0 = [0.001, 10e6, 0.00005 , 2e8, 0.01, -0.1, 1  , 21,6 ];
+lb = [0    , 1e6 , 0       , 1e7, 0.01, -0.2, 0.5, 20,5 ];
+ub = [0.01 , 1e8 , 0.0001  , 1e9, 0.1 , 0   , 1.1, 26,10];
 
 [x,fval] = fminsearchbound(@(x) costfunction(x,inp,'systeemidentificatie_1zone_metUFH'),x0,lb,ub,optimset('Display','iter','MaxFunEvals',10000,'MaxIter',10000));
 
@@ -83,7 +83,7 @@ A = x(5)
 B = x(6)
 cf_sol = x(7)
 COPmax = x(9)
-cf_WP = x(10)
+cf_WP = 1;
 
 T_berekend = zeros(length(inp.T_gem),1);
 T_berekend(1) = inp.T_gem(1);
